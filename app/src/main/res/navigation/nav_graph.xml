@@ -36,5 +36,18 @@
         android:id="@+id/Favorite"
         android:name="com.bassem.shoopinguser.ui.main_ui.favorite.FavoriteList"
         android:label="favorite_fragment"
-        tools:layout="@layout/favorite_fragment" />
+        tools:layout="@layout/favorite_fragment" >
+        <action
+            android:id="@+id/action_Favorite_to_cartListClass"
+            app:destination="@id/cartListClass" />
+    </fragment>
+    <fragment
+        android:id="@+id/account"
+        android:name="com.bassem.shoopinguser.ui.main_ui.profile.AccountClass"
+        android:label="account_fragment"
+        tools:layout="@layout/account_fragment" >
+        <action
+            android:id="@+id/action_account_to_cartListClass"
+            app:destination="@id/cartListClass" />
+    </fragment>
 </navigation>

@@ -10,6 +10,7 @@ import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.models.ItemsClass
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteInterface,
     HomeRecycleAdapter.expandView {
@@ -17,6 +18,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
     lateinit var adapter: HomeRecycleAdapter
     lateinit var itemsList: MutableList<ItemsClass>
     lateinit var fabCart: CounterFab
+    lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,16 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         itemsList.add(ItemsClass("shorts", 470))
         itemsList.add(ItemsClass("cap", 320))
         itemsList.add(ItemsClass("shit", 221))
+        itemsList.add(ItemsClass("jeans", 310, true))
+        itemsList.add(ItemsClass("skirt", 250))
+        itemsList.add(ItemsClass("shorts", 470))
+        itemsList.add(ItemsClass("cap", 320))
+        itemsList.add(ItemsClass("shit", 221, true))
+        itemsList.add(ItemsClass("jeans", 310))
+        itemsList.add(ItemsClass("skirt", 250))
+        itemsList.add(ItemsClass("shorts", 470))
+        itemsList.add(ItemsClass("cap", 320))
+        itemsList.add(ItemsClass("shit", 221))
         recycleSetup()
         fabCart.setOnClickListener {
             findNavController().navigate(R.id.action_homeClass_to_cartListClass)
@@ -62,6 +74,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
 
     fun recycleSetup() {
         recyclerView = view!!.findViewById(R.id.homeRV)
+        bottomNavigationView=activity!!.findViewById(R.id.bottomAppBar)
         adapter = HomeRecycleAdapter(itemsList, context!!, this, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
@@ -70,6 +83,20 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
+                when(newState){
+                    RecyclerView.SCROLL_STATE_DRAGGING->{
+                        fabCart.visibility = View.GONE
+                        bottomNavigationView.visibility = View.GONE
+
+
+                    }
+                    RecyclerView.SCROLL_STATE_IDLE->{
+                        fabCart.visibility = View.VISIBLE
+                        bottomNavigationView.visibility = View.VISIBLE
+
+
+                    }
+                }
 
 
 
