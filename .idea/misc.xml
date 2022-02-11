@@ -13,10 +13,12 @@
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/activity_login.xml" value="0.19746376811594202" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/activity_welcome.xml" value="0.22" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/cart_fragment.xml" value="0.25" />
-        <entry key="..\:/ShoopingUser/app/src/main/res/layout/cart_item.xml" value="0.25" />
+        <entry key="..\:/ShoopingUser/app/src/main/res/layout/cart_item.xml" value="0.33" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/expand_fragment.xml" value="0.33" />
+        <entry key="..\:/ShoopingUser/app/src/main/res/layout/favorite_fragment.xml" value="0.3179347826086957" />
+        <entry key="..\:/ShoopingUser/app/src/main/res/layout/favorite_item.xml" value="0.3179347826086957" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/home_fragment.xml" value="0.17831813576494426" />
-        <entry key="..\:/ShoopingUser/app/src/main/res/layout/item_home.xml" value="0.5" />
+        <entry key="..\:/ShoopingUser/app/src/main/res/layout/item_home.xml" value="0.67" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/login_activity.xml" value="0.17831813576494426" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/login_fragment.xml" value="0.22" />
         <entry key="..\:/ShoopingUser/app/src/main/res/layout/signup_fragment.xml" value="0.21" />

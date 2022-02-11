@@ -66,6 +66,16 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.setHasFixedSize(true)
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+
+
+            }
+        })
+
     }
 
     override fun makeFavorite(postion: Int) {

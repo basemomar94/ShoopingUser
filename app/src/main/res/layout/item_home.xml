@@ -32,13 +32,22 @@
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/favoriteItemView"
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_margin="16dp"
-                app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/lightgray"
+                app:cardCornerRadius="50dp">
+
+                <ImageView
+                    android:id="@+id/favoriteItemView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|right"
+                    android:layout_margin="4dp"
+                    app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -32,4 +32,9 @@
         android:name="com.bassem.shoopinguser.ui.main_ui.cart.CartListClass"
         android:label="cart_fragment"
         tools:layout="@layout/cart_fragment" />
+    <fragment
+        android:id="@+id/Favorite"
+        android:name="com.bassem.shoopinguser.ui.main_ui.favorite.FavoriteList"
+        android:label="favorite_fragment"
+        tools:layout="@layout/favorite_fragment" />
 </navigation>
