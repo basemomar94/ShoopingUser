@@ -14,11 +14,11 @@ import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class CartListClass : Fragment(R.layout.cart_fragment) {
+class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
     var _binding: CartFragmentBinding? = null
     val binding get() = _binding
     var cartListList: MutableList<CartClass>? = null
-    var adapter: CartRecycleAdapter? = null
+    var cartAdapter: CartRecycleAdapter? = null
     var recyclerView: RecyclerView? = null
     lateinit var fabCounterFab: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
@@ -26,7 +26,12 @@ class CartListClass : Fragment(R.layout.cart_fragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cartListList= arrayListOf()
+        cartListList = arrayListOf()
+        cartListList!!.add(CartClass("jacket", 400))
+        cartListList!!.add(CartClass("jacket", 400))
+        cartListList!!.add(CartClass("jacket", 400))
+        cartListList!!.add(CartClass("jacket", 400))
+        cartListList!!.add(CartClass("jacket", 400))
 
     }
 
@@ -41,36 +46,54 @@ class CartListClass : Fragment(R.layout.cart_fragment) {
 
     override fun onDetach() {
         super.onDetach()
-        fabCounterFab.visibility=View.VISIBLE
-        bottomNavigationView.visibility=View.VISIBLE
+        fabCounterFab.visibility = View.VISIBLE
+        bottomNavigationView.visibility = View.VISIBLE
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cartListList!!.add(CartClass("jacket",400))
-        cartListList!!.add(CartClass("jacket",400))
-        cartListList!!.add(CartClass("jacket",400))
-        cartListList!!.add(CartClass("jacket",400))
-        cartListList!!.add(CartClass("jacket",400))
-        fabCounterFab=activity!!.findViewById(R.id.cartFloating)
-        fabCounterFab.visibility=View.GONE
-        bottomNavigationView=activity!!.findViewById(R.id.bottomAppBar)
-        bottomNavigationView.visibility=View.GONE
+
+        fabCounterFab = activity!!.findViewById(R.id.cartFloating)
+        fabCounterFab.visibility = View.GONE
+        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView.visibility = View.GONE
 
         RecycleSetup()
     }
 
     fun RecycleSetup() {
+        cartAdapter = CartRecycleAdapter(cartListList!!, this@CartListClass)
         recyclerView = view!!.findViewById(R.id.cartRv)
         recyclerView!!.apply {
-            adapter = CartRecycleAdapter(cartListList!!)
+            adapter = cartAdapter
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
         }
 
     }
 
+    override fun remove(position: Int) {
+        cartListList!!.removeAt(position)
+        cartAdapter!!.notifyItemRemoved(position)
+    }
+
+    override fun add(position: Int) {
+        val itemCart = cartListList!![position]
+        if (itemCart.amount<10){
+            itemCart.amount++
+        }
+        cartAdapter!!.notifyItemChanged(position)
+    }
+
+    override fun minus(position: Int) {
+        val itemCart = cartListList!![position]
+        if (itemCart.amount>1){
+            itemCart.amount--
+
+        }
+        cartAdapter!!.notifyItemChanged(position)
+    }
 
 
 }

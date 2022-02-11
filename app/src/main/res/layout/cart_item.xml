@@ -58,6 +58,7 @@
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/addCart"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginLeft="8dp"
@@ -89,6 +90,7 @@
 
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/minusCart"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginLeft="8dp"
@@ -113,7 +115,7 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/imageView11"
+        android:id="@+id/cartRemove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
