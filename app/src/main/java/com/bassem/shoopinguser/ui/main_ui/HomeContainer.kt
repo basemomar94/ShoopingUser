@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.main_ui
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +21,17 @@ class HomeContainer : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
+            badgeTextColor=Color.DKGRAY
+            backgroundColor=Color.parseColor("#FFA56D")
+            number=5
+        }
+        bottomNavigationView.getOrCreateBadge(R.id.Notifications).apply {
+            badgeTextColor=Color.DKGRAY
+            backgroundColor=Color.parseColor("#FFA56D")
+            number=5
+        }
+
 
 
     }

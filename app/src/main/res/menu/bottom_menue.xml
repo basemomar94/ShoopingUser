@@ -10,6 +10,7 @@
         android:icon="@drawable/ic_baseline_favorite_24"
         android:title="Favorite" />
     <item
+        android:id="@+id/Notifications"
         android:icon="@drawable/ic_baseline_notifications_24"
         android:title="Notifications" />
     <item

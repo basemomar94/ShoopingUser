@@ -65,6 +65,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         itemsList.add(ItemsClass("cap", 320))
         itemsList.add(ItemsClass("shit", 221))
         recycleSetup()
+
         fabCart.setOnClickListener {
             findNavController().navigate(R.id.action_homeClass_to_cartListClass)
         }

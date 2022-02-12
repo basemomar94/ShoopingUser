@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
@@ -48,6 +49,9 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
         favoriteList.add(FavoriteClass("blouse", 500))
         favoriteList.add(FavoriteClass("blouse", 500))
         recycleSetup()
+        fabCart.setOnClickListener {
+            findNavController().navigate(R.id.action_Favorite_to_cartListClass)
+        }
 
     }
 

@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 
 class AccountClass : Fragment(R.layout.account_fragment) {
+    lateinit var fabCart: CounterFab
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,5 +26,12 @@ class AccountClass : Fragment(R.layout.account_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fabCart=activity!!.findViewById(R.id.cartFloating)
+        fabCart.visibility=View.GONE
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        fabCart.visibility=View.VISIBLE
     }
 }
