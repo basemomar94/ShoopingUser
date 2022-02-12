@@ -54,5 +54,9 @@
         android:id="@+id/Notifications"
         android:name="com.bassem.shoopinguser.ui.main_ui.notifications.NotificationsList"
         android:label="notification_fragment"
-        tools:layout="@layout/notification_fragment" />
+        tools:layout="@layout/notification_fragment" >
+        <action
+            android:id="@+id/action_Notifications_to_cartListClass"
+            app:destination="@id/cartListClass" />
+    </fragment>
 </navigation>
