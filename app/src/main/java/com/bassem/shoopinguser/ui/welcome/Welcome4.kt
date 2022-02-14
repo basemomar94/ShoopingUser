@@ -36,6 +36,7 @@ class Welcome4 : Fragment(R.layout.welcome_fragment4) {
     }
 
     fun goTologin() {
+        WelcomeClass().skipWelcome()
         val intent = Intent(activity, LoginActivity::class.java)
         activity?.startActivity(intent)
         activity?.finish()

@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.welcome
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -35,7 +36,7 @@ class WelcomeClass : AppCompatActivity() {
 
         }
         binding.skipBtu.setOnClickListener {
-            println("clicked")
+            skipWelcome()
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
@@ -89,6 +90,13 @@ class WelcomeClass : AppCompatActivity() {
 
     fun setPreviousPager(current: Int) {
         pager.currentItem = current - 1
+    }
+
+    fun skipWelcome() {
+        val sharedPreferences = getSharedPreferences("PREF", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("Isskip", true)
+        editor.apply()
     }
 
 

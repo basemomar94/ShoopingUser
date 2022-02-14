@@ -23,23 +23,25 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mailSignLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/emailET"
+                    android:id="@+id/mailSignin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:background="@color/white"
                     android:ems="10"
-                    android:hint="Enter your phone number"
+                    android:hint="Enter your mail"
                     android:inputType="textEmailAddress"
                     android:minHeight="48dp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passSignLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -52,7 +54,7 @@
                 app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/passwordET"
+                    android:id="@+id/passSigin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
@@ -74,7 +76,15 @@
                 android:textAllCaps="false" />
 
 
-
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/orange"
+                android:indeterminateTintMode="src_atop"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="wrap_content"

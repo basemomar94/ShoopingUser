@@ -9,10 +9,13 @@ import androidx.fragment.app.Fragment
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.LoginFragmentBinding
 import com.bassem.shoopinguser.ui.main_ui.HomeContainer
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment(R.layout.login_fragment) {
     var _binding: LoginFragmentBinding? = null
     val binding get() = _binding
+    lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -33,7 +36,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
             goToSignup()
         }
         binding!!.loginBtu.setOnClickListener {
-            gotoHome()
+            signIn()
         }
 
     }
@@ -48,5 +51,40 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         val intent = Intent(requireActivity(), HomeContainer::class.java)
         activity?.startActivity(intent)
         activity?.finish()
+    }
+
+    fun signIn() {
+        val mail = binding!!.mailSignin.text!!.trim().toString()
+        val password = binding!!.passSigin.text!!.trim().toString()
+        SignupClass().errorEmpty(mail, binding!!.mailSignLayout)
+        SignupClass().errorEmpty(password, binding!!.passSignLayout)
+        if (mail.isNotEmpty() && password.isNotEmpty()) {
+            loading()
+            auth = FirebaseAuth.getInstance()
+            auth.signInWithEmailAndPassword(mail, password).addOnCompleteListener {
+                if (it.isSuccessful) {
+                    gotoHome()
+                } else {
+                    normal()
+                    Snackbar.make(
+                        requireView(),
+                        it.exception!!.message.toString(),
+                        Snackbar.LENGTH_LONG
+                    )
+                        .show()
+                }
+            }
+        }
+
+    }
+
+    fun loading() {
+        binding!!.loginBtu.visibility = View.GONE
+        binding!!.progressBar2.visibility = View.VISIBLE
+    }
+
+    fun normal() {
+        binding!!.loginBtu.visibility = View.VISIBLE
+        binding!!.progressBar2.visibility = View.GONE
     }
 }

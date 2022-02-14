@@ -284,13 +284,23 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/logOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:background="@drawable/bttuon"
                 android:text="Log Out"
                 android:textAllCaps="false" />
+
+            <ProgressBar
+                android:id="@+id/progressBar4"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/orange"
+                android:indeterminateTintMode="src_atop"
+                android:visibility="gone" />
 
         </LinearLayout>
 
