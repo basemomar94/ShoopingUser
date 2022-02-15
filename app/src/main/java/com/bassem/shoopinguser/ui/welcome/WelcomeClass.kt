@@ -23,7 +23,6 @@ class WelcomeClass : AppCompatActivity() {
         supportActionBar?.hide()
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         pagerConfiguration()
 
         //listeners

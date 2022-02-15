@@ -13,11 +13,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupClass : Fragment(R.layout.signup_fragment) {
     var _binding: SignupFragmentBinding? = null
     val binding get() = _binding
     lateinit var auth: FirebaseAuth
+    lateinit var db: FirebaseFirestore
+    lateinit var mail: String
+    lateinit var password: String
+    lateinit var passwordCheck: String
+    lateinit var name: String
+    lateinit var adress: String
+    lateinit var phone: String
+    lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +43,7 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
         binding!!.login.setOnClickListener {
             goTo(LoginFragment())
         }
-        binding!!.signupB.setOnClickListener {
+        binding!!.signupButton.setOnClickListener {
             signup()
         }
 
@@ -47,42 +56,14 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
     }
 
     fun signup() {
-        val mail = binding!!.mail.text!!.trim().toString()
-        val password = binding!!.password.text!!.trim().toString()
-        val passwordCheck = binding!!.passwordcheck.text!!.trim().toString()
-        val name = binding!!.fullname.text!!.trim().toString()
-        val adress = binding!!.adress.text!!.trim().toString()
+        mail = binding!!.mail.text!!.trim().toString()
+        password = binding!!.password.text!!.trim().toString()
+        passwordCheck = binding!!.passwordcheck.text!!.trim().toString()
+        name = binding!!.fullname.text!!.trim().toString()
+        adress = binding!!.adress.text!!.trim().toString()
+        phone = binding!!.phone.text!!.trim().toString()
         //Empty Check
-        errorEmpty(mail, binding!!.mailLayout)
-        errorEmpty(password, binding!!.passwordLayout)
-        errorEmpty(passwordCheck, binding!!.passwordcheckLayout)
-        errorEmpty(name, binding!!.nameLayout)
-        errorEmpty(adress, binding!!.adressLayout)
-
-        if (mail.isNotEmpty() && password.isNotEmpty() && passwordCheck.isNotEmpty() && name.isNotEmpty() && adress.isNotEmpty()) {
-
-            if (password != passwordCheck) {
-                binding!!.passwordLayout.error = "Your password should be identical"
-                binding!!.passwordcheckLayout.error = "Your password should be identical"
-            } else {
-                loading()
-                auth = FirebaseAuth.getInstance()
-                auth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        gotoHome()
-                    } else {
-                        println(it.exception.toString())
-                        //   Snackbar.make(requireView(), it.exception.toString(), Snackbar.LENGTH_LONG).show()
-                        normal()
-                    }
-                }.addOnFailureListener {
-                    Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG)
-                        .show()
-                }
-
-
-            }
-        }
+        checkEmpty()
 
 
     }
@@ -96,6 +77,42 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
         }
     }
 
+    fun checkEmpty() {
+        errorEmpty(mail, binding!!.mailLayout)
+        errorEmpty(password, binding!!.passwordLayout)
+        errorEmpty(passwordCheck, binding!!.passwordcheckLayout)
+        errorEmpty(name, binding!!.nameLayout)
+        errorEmpty(adress, binding!!.adressLayout)
+        errorEmpty(phone, binding!!.phoneLayout)
+        if (mail.isNotEmpty() && password.isNotEmpty() && passwordCheck.isNotEmpty() && name.isNotEmpty() && adress.isNotEmpty()) {
+
+            if (password != passwordCheck) {
+                binding!!.passwordLayout.error = "Your password should be identical"
+                binding!!.passwordcheckLayout.error = "Your password should be identical"
+            } else {
+                firebaseAuth()
+            }
+        }
+    }
+
+    fun firebaseAuth() {
+
+        loading()
+        auth = FirebaseAuth.getInstance()
+        auth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener {
+            if (it.isSuccessful) {
+                userId = auth.uid!!
+                addtoDB()
+            } else {
+                normal()
+            }
+        }.addOnFailureListener {
+            Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG)
+                .show()
+            normal()
+        }
+    }
+
     fun gotoHome() {
         val intent = Intent(activity, HomeContainer::class.java)
         activity!!.startActivity(intent)
@@ -103,13 +120,40 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
     }
 
     fun loading() {
-        binding!!.signupB.visibility = View.GONE
+        binding!!.signupButton.visibility = View.INVISIBLE
         binding!!.progressBar.visibility = View.VISIBLE
     }
 
     fun normal() {
-        binding!!.signupB.visibility = View.VISIBLE
+        binding!!.signupButton.visibility = View.VISIBLE
         binding!!.progressBar.visibility = View.GONE
+    }
+
+    fun addtoDB() {
+        val user = HashMap<Any, String>()
+        user["name"] = name
+        user["id"] = userId
+        user["mail"] = mail
+        user["adress"] = adress
+        user["phone"] = phone
+        user["password"] = password
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userId).set(user).addOnCompleteListener {
+            if (it.isSuccessful) {
+                gotoHome()
+
+            } else {
+                normal()
+
+                Snackbar.make(
+                    requireView(),
+                    it.exception!!.message.toString(),
+                    Snackbar.LENGTH_LONG
+                )
+                    .show()
+            }
+
+        }
     }
 
 

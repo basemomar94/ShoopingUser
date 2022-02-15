@@ -58,8 +58,16 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         fabCounterFab.visibility = View.GONE
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
-
         RecycleSetup()
+        binding!!.checkBox.setOnClickListener {
+            if (binding!!.checkBox.isChecked){
+                binding!!.promoLayout.visibility = View.VISIBLE
+            } else {
+                binding!!.promoLayout.visibility = View.GONE
+
+            }
+        }
+
     }
 
     fun RecycleSetup() {
@@ -80,7 +88,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     override fun add(position: Int) {
         val itemCart = cartListList!![position]
-        if (itemCart.amount<10){
+        if (itemCart.amount < 10) {
             itemCart.amount++
         }
         cartAdapter!!.notifyItemChanged(position)
@@ -88,7 +96,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     override fun minus(position: Int) {
         val itemCart = cartListList!![position]
-        if (itemCart.amount>1){
+        if (itemCart.amount > 1) {
             itemCart.amount--
 
         }

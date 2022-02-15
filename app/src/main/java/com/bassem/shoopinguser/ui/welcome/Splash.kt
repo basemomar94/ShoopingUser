@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.ActivityWelcomeBinding
@@ -28,6 +29,8 @@ class Splash : AppCompatActivity() {
         supportActionBar?.hide()
         binding = SplashFragmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
 
     }
 
