@@ -60,8 +60,8 @@ class HomeRecycleAdapter(
             holder.favorite.setImageDrawable(unfavorite)
 
         }
-        //   val url = item.imageUrl
-        // Glide.with(context).load(url).into(holder.image)
+        val url = item.photo
+        Glide.with(context).load(url).into(holder.image)
     }
 
     override fun getItemCount(): Int {

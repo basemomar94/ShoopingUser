@@ -60,7 +60,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         bottomNavigationView.visibility = View.GONE
         RecycleSetup()
         binding!!.checkBox.setOnClickListener {
-            if (binding!!.checkBox.isChecked){
+            if (binding!!.checkBox.isChecked) {
                 binding!!.promoLayout.visibility = View.VISIBLE
             } else {
                 binding!!.promoLayout.visibility = View.GONE
@@ -84,6 +84,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     override fun remove(position: Int) {
         cartListList!!.removeAt(position)
         cartAdapter!!.notifyItemRemoved(position)
+        recyclerView!!.invalidate()
+
     }
 
     override fun add(position: Int) {

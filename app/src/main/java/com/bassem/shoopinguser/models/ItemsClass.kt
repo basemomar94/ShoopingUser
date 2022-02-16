@@ -1,8 +1,9 @@
 package com.bassem.shoopinguser.models
 
 data class ItemsClass(
-    val title:String,
-    //val imageUrl:String,
-    val price:Int,
-    var favorite:Boolean=false
+    val title:String?=null,
+    val photo:String?=null,
+    val price:String?=null,
+    var favorite:Boolean=false,
+    val amount:String?=null
 )

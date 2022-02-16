@@ -11,6 +11,7 @@ import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.models.ItemsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.*
 
 class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteInterface,
     HomeRecycleAdapter.expandView {
@@ -19,6 +20,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
     lateinit var itemsList: MutableList<ItemsClass>
     lateinit var fabCart: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,27 +46,8 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         fabCart = activity!!.findViewById(R.id.cartFloating)
         fabCart.count = 2
         itemsList = arrayListOf()
-        itemsList.add(ItemsClass("jeans", 310, true))
-        itemsList.add(ItemsClass("skirt", 250))
-        itemsList.add(ItemsClass("shorts", 470))
-        itemsList.add(ItemsClass("cap", 320))
-        itemsList.add(ItemsClass("shit", 221, true))
-        itemsList.add(ItemsClass("jeans", 310))
-        itemsList.add(ItemsClass("skirt", 250))
-        itemsList.add(ItemsClass("shorts", 470))
-        itemsList.add(ItemsClass("cap", 320))
-        itemsList.add(ItemsClass("shit", 221))
-        itemsList.add(ItemsClass("jeans", 310, true))
-        itemsList.add(ItemsClass("skirt", 250))
-        itemsList.add(ItemsClass("shorts", 470))
-        itemsList.add(ItemsClass("cap", 320))
-        itemsList.add(ItemsClass("shit", 221, true))
-        itemsList.add(ItemsClass("jeans", 310))
-        itemsList.add(ItemsClass("skirt", 250))
-        itemsList.add(ItemsClass("shorts", 470))
-        itemsList.add(ItemsClass("cap", 320))
-        itemsList.add(ItemsClass("shit", 221))
         recycleSetup()
+        getItemsFromFirebase()
 
         fabCart.setOnClickListener {
             findNavController().navigate(R.id.action_homeClass_to_cartListClass)
@@ -75,7 +58,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
 
     fun recycleSetup() {
         recyclerView = view!!.findViewById(R.id.homeRV)
-        bottomNavigationView=activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         adapter = HomeRecycleAdapter(itemsList, context!!, this, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
@@ -84,21 +67,20 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                when(newState){
-                    RecyclerView.SCROLL_STATE_DRAGGING->{
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_DRAGGING -> {
                         fabCart.visibility = View.GONE
                         bottomNavigationView.visibility = View.GONE
 
 
                     }
-                    RecyclerView.SCROLL_STATE_IDLE->{
+                    RecyclerView.SCROLL_STATE_IDLE -> {
                         fabCart.visibility = View.VISIBLE
                         bottomNavigationView.visibility = View.VISIBLE
 
 
                     }
                 }
-
 
 
             }
@@ -123,6 +105,30 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
 
     override fun viewItem(position: Int) {
         goToView()
+    }
+
+    fun getItemsFromFirebase() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("items").addSnapshotListener { value, error ->
+            if (error != null) {
+                println(error.message)
+            } else {
+                Thread(Runnable {
+                    for (dc: DocumentChange in value!!.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            itemsList.add(dc.document.toObject(ItemsClass::class.java))
+                            println("LOOOOOP")
+                        }
+
+                    }
+                    activity!!.runOnUiThread {
+                        adapter.notifyDataSetChanged()
+                    }
+                }).start()
+
+            }
+        }
+
     }
 
 
