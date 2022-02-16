@@ -3,6 +3,7 @@ package com.bassem.shoopinguser.ui.main_ui.home
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,9 +13,9 @@ import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.models.ItemsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.*
+import kotlinx.android.synthetic.main.activity_home_container.*
 
-class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteInterface,
-    HomeRecycleAdapter.expandView {
+class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface {
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: HomeRecycleAdapter
     lateinit var itemsList: MutableList<ItemsClass>
@@ -44,9 +45,11 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fabCart = activity!!.findViewById(R.id.cartFloating)
+        fabCart.visibility = View.VISIBLE
         fabCart.count = 2
         itemsList = arrayListOf()
         recycleSetup()
+
         getItemsFromFirebase()
 
         fabCart.setOnClickListener {
@@ -59,7 +62,9 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
     fun recycleSetup() {
         recyclerView = view!!.findViewById(R.id.homeRV)
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
-        adapter = HomeRecycleAdapter(itemsList, context!!, this, this)
+        bottomNavigationView.visibility = View.VISIBLE
+        // cartFloating.visibility=View.VISIBLE
+        adapter = HomeRecycleAdapter(itemsList, context!!, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.setHasFixedSize(true)
@@ -99,12 +104,17 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.favoriteI
 
     }
 
-    fun goToView() {
-        findNavController().navigate(R.id.action_homeClass_to_expandView)
+    fun goToView(documentid: String) {
+        val bundle = Bundle()
+        bundle.putString("document", documentid)
+        val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+        navController.navigate(R.id.action_homeClass_to_expandView, bundle)
     }
 
     override fun viewItem(position: Int) {
-        goToView()
+        val document = itemsList[position].id
+        goToView(document!!)
+        println(position)
     }
 
     fun getItemsFromFirebase() {

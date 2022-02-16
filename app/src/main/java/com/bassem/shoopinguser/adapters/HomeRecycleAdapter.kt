@@ -15,8 +15,7 @@ import com.bumptech.glide.Glide
 class HomeRecycleAdapter(
     val itemsList: MutableList<ItemsClass>,
     val context: Context,
-    val favoriteListner: favoriteInterface,
-    val viewListner: expandView
+    val expandListner: expandInterface,
 ) : RecyclerView.Adapter<HomeRecycleAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
@@ -26,15 +25,16 @@ class HomeRecycleAdapter(
         val favorite = itemview.findViewById<ImageView>(R.id.favoriteItemView)
 
         init {
-            val position = adapterPosition
 
             favorite.setOnClickListener {
                 val positionFavorite = adapterPosition
 
-                favoriteListner.makeFavorite(positionFavorite)
+                expandListner.makeFavorite(positionFavorite)
             }
             itemview.setOnClickListener {
-                viewListner.viewItem(position)
+                val position = adapterPosition
+
+                expandListner.viewItem(position)
             }
 
         }
@@ -68,14 +68,14 @@ class HomeRecycleAdapter(
         return itemsList.size
     }
 
-    interface favoriteInterface {
+    interface expandInterface {
         fun makeFavorite(postion: Int)
-
-
-    }
-
-    interface expandView {
         fun viewItem(position: Int)
+
+
+
     }
+
+
 
 }

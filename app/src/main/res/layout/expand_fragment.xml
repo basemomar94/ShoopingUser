@@ -13,13 +13,12 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/itemView"
             android:layout_width="match_parent"
-            android:layout_height="394dp"
-            app:srcCompat="@drawable/pullover" />
+            android:layout_height="394dp" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/itemTitleview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -31,7 +30,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/itemPriceview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
