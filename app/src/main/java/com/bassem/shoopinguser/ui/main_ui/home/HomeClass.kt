@@ -63,7 +63,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         recyclerView = view!!.findViewById(R.id.homeRV)
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.VISIBLE
-        // cartFloating.visibility=View.VISIBLE
+
         adapter = HomeRecycleAdapter(itemsList, context!!, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)

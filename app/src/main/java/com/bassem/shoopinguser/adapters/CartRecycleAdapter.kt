@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.adapters
 
+import android.content.Context
 import android.nfc.NfcAdapter
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,12 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.models.CartClass
+import com.bumptech.glide.Glide
 
 class CartRecycleAdapter(
     val cartList: MutableList<CartClass>,
-    val removedListener: removeInterface
+    val removedListener: removeInterface,
+    val context: Context
 ) : RecyclerView.Adapter<CartRecycleAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemview: View) : RecyclerView.ViewHolder(itemview) {
@@ -23,6 +26,7 @@ class CartRecycleAdapter(
         val remove = itemview.findViewById<ImageView>(R.id.cartRemove)
         val add = itemview.findViewById<CardView>(R.id.addCart)
         val minus = itemview.findViewById<CardView>(R.id.minusCart)
+        val photo = itemview.findViewById<ImageView>(R.id.cartPhoto)
 
 
         init {
@@ -52,8 +56,10 @@ class CartRecycleAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cartItem = cartList[position]
         holder.title.text = cartItem.title
-        holder.price.text = "${cartItem.price} EGP"
         holder.amount.text = cartItem.amount.toString()
+        holder.price.text = "${(cartItem.amount)*(cartItem.price!!.toInt())} EGP"
+        val url = cartItem.photo
+        Glide.with(context).load(url).into(holder.photo)
     }
 
     override fun getItemCount(): Int {

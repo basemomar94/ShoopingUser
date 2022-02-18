@@ -13,6 +13,9 @@ import com.bassem.shoopinguser.adapters.CartRecycleAdapter
 import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.*
 
 class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
     var _binding: CartFragmentBinding? = null
@@ -22,16 +25,18 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     var recyclerView: RecyclerView? = null
     lateinit var fabCounterFab: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var userID: String
+    lateinit var auth: FirebaseAuth
+    lateinit var db: FirebaseFirestore
+    var cartListIds: Any? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+        userID = auth.currentUser!!.uid
         cartListList = arrayListOf()
-        cartListList!!.add(CartClass("jacket", 400))
-        cartListList!!.add(CartClass("jacket", 400))
-        cartListList!!.add(CartClass("jacket", 400))
-        cartListList!!.add(CartClass("jacket", 400))
-        cartListList!!.add(CartClass("jacket", 400))
+
 
     }
 
@@ -59,6 +64,12 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
         RecycleSetup()
+        getCart()
+        binding!!.checkOut.setOnClickListener {
+        }
+
+
+
         binding!!.checkBox.setOnClickListener {
             if (binding!!.checkBox.isChecked) {
                 binding!!.promoLayout.visibility = View.VISIBLE
@@ -71,7 +82,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun RecycleSetup() {
-        cartAdapter = CartRecycleAdapter(cartListList!!, this@CartListClass)
+        cartAdapter = CartRecycleAdapter(cartListList!!, this@CartListClass, context!!)
         recyclerView = view!!.findViewById(R.id.cartRv)
         recyclerView!!.apply {
             adapter = cartAdapter
@@ -82,9 +93,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     override fun remove(position: Int) {
-        cartListList!!.removeAt(position)
-        cartAdapter!!.notifyItemRemoved(position)
-        recyclerView!!.invalidate()
+
+        removeFromCart(position)
+
 
     }
 
@@ -92,6 +103,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val itemCart = cartListList!![position]
         if (itemCart.amount < 10) {
             itemCart.amount++
+            updatePrice()
+
         }
         cartAdapter!!.notifyItemChanged(position)
     }
@@ -100,9 +113,64 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val itemCart = cartListList!![position]
         if (itemCart.amount > 1) {
             itemCart.amount--
+            updatePrice()
 
         }
         cartAdapter!!.notifyItemChanged(position)
+
+    }
+
+    fun getCart() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).addSnapshotListener { value, error ->
+            if (error != null) {
+                println(error.message)
+            } else {
+                Thread(Runnable {
+
+                    cartListIds = value!!.get("cart")
+                    if (cartListIds != null) {
+                        for (item in cartListIds as List<String>) {
+                            db.collection("items").document(item).get().addOnSuccessListener {
+                                val item = it.toObject(CartClass::class.java)
+                                if (item != null) {
+                                    cartListList!!.add(item)
+                                }
+                                activity!!.runOnUiThread {
+                                    cartAdapter!!.notifyDataSetChanged()
+                                    updatePrice()
+                                    println("Inside ui")
+                                }
+                            }
+                        }
+                    }
+
+                }).start()
+
+
+            }
+        }
+
+    }
+
+    fun removeFromCart(position: Int) {
+        cartListList!!.removeAt(position)
+        var firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
+        firebaseUpdatedList.removeAt(position)
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("cart", firebaseUpdatedList)
+        cartAdapter!!.notifyItemRemoved(position)
+        updatePrice()
+
+    }
+
+    fun updatePrice() {
+        val sum = cartListList!!.sumBy { it.price!!.toInt() }
+        binding!!.subtotal.text = "$sum EGP"
+        val dilveryFees = 25
+        val total = sum + dilveryFees
+        binding!!.totalCart.text = "$total EGP"
+        println("$sum================$total")
     }
 
 

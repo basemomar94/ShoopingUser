@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -64,6 +65,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
             auth.signInWithEmailAndPassword(mail, password).addOnCompleteListener {
                 if (it.isSuccessful) {
                     gotoHome()
+                    val userID = auth.currentUser!!.uid
                 } else {
                     normal()
                     Snackbar.make(
@@ -87,4 +89,6 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
         binding!!.loginBtu.visibility = View.VISIBLE
         binding!!.progressBar2.visibility = View.GONE
     }
+
+
 }

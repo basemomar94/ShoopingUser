@@ -26,7 +26,11 @@
         android:id="@+id/expandView"
         android:name="com.bassem.shoopinguser.ui.main_ui.expandview.ExpandView"
         android:label="expand_fragment"
-        tools:layout="@layout/expand_fragment" />
+        tools:layout="@layout/expand_fragment" >
+        <action
+            android:id="@+id/action_expandView_to_cartListClass"
+            app:destination="@id/cartListClass" />
+    </fragment>
     <fragment
         android:id="@+id/cartListClass"
         android:name="com.bassem.shoopinguser.ui.main_ui.cart.CartListClass"

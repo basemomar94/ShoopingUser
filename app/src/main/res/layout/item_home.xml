@@ -31,7 +31,7 @@
                         android:id="@+id/itemImg"
                         android:layout_width="150dp"
                         android:layout_height="180dp"
-                        android:scaleType="centerInside"
+                        android:scaleType="centerCrop"
                         app:srcCompat="@drawable/pullover" />
 
                 </LinearLayout>

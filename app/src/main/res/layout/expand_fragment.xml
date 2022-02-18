@@ -15,7 +15,8 @@
         <ImageView
             android:id="@+id/itemView"
             android:layout_width="match_parent"
-            android:layout_height="394dp" />
+            android:layout_height="394dp"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/itemTitleview"
@@ -170,7 +171,7 @@
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/cartExpand"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -178,6 +179,18 @@
                 android:text="Add to cart 🛒"
                 android:textAllCaps="false"
                 android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/checkCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bttuon"
+                android:text="Check your cart 🛒"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:visibility="gone" />
 
         </LinearLayout>
     </LinearLayout>

@@ -1,16 +1,22 @@
 package com.bassem.shoopinguser.ui.main_ui.expandview
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.ExpandFragmentBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ExpandView : Fragment(R.layout.expand_fragment) {
@@ -20,13 +26,21 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var db: FirebaseFirestore
     lateinit var documentID: String
+    lateinit var userID: String
+    lateinit var itemID: String
+    lateinit var auth: FirebaseAuth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bundle = this.arguments
         if (bundle != null) {
-            documentID = bundle.getString("document", "")
+            documentID = bundle.getString("document", "fail")
         }
+
+        auth = FirebaseAuth.getInstance()
+        userID = auth.currentUser!!.uid
+        println("IT is user $userID")
 
 
     }
@@ -43,16 +57,26 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fabCounterFab = activity!!.findViewById(R.id.cartFloating)
-        fabCounterFab.visibility = View.GONE
+      //  fabCounterFab.visibility = View.GONE
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
+
         gettingData()
+        //listners
+        binding!!.cartExpand.setOnClickListener {
+            if (documentID != "fail") {
+                addtoCart()
+            }
+        }
+        binding!!.checkCart.setOnClickListener {
+            findNavController().navigate(R.id.action_expandView_to_cartListClass)
+        }
 
     }
 
     override fun onResume() {
         super.onResume()
-        fabCounterFab.visibility = View.GONE
+       // fabCounterFab.visibility = View.GONE
         bottomNavigationView.visibility = View.GONE
 
 
@@ -75,11 +99,25 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
                 val imageUrl = value!!.getString("photo")
                 val title = value.getString("title")
                 val price = value.getString("price")
+                itemID = value.getString("id")!!
                 Glide.with(context!!).load(imageUrl).into(binding!!.itemView)
                 binding!!.itemTitleview.text = title
                 binding!!.itemPriceview.text = price + " EGP"
             }
         }
+    }
+
+    fun addtoCart() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(documentID))
+            .addOnCompleteListener {
+                Snackbar.make(requireView(), "added to your cart", Snackbar.LENGTH_LONG).show()
+               // binding!!.cartExpand.visibility = View.GONE
+              //  binding!!.checkCart.visibility = View.VISIBLE
+
+
+            }
+
     }
 
 

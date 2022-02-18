@@ -22,9 +22,10 @@
             app:cardMaxElevation="1dp">
 
             <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/cartPhoto"
                 android:layout_width="140dp"
                 android:layout_height="120dp"
+                android:scaleType="centerCrop"
                 app:srcCompat="@drawable/pullover" />
         </androidx.cardview.widget.CardView>
 

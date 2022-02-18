@@ -82,7 +82,7 @@
                     android:textColor="@color/gray" />
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/subtotal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -109,7 +109,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="250 EGP"
+                    android:text="0 EGP"
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -132,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="250 EGP"
+                    android:text="25 EGP"
                     android:textColor="@color/black" />
             </LinearLayout>
 
@@ -164,6 +164,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/totalCart"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -173,7 +174,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/checkOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"

@@ -20,6 +20,7 @@ class Splash : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         isLogin()
     }
 
@@ -29,7 +30,6 @@ class Splash : AppCompatActivity() {
         supportActionBar?.hide()
         binding = SplashFragmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
 
     }
