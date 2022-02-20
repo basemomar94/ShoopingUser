@@ -37,10 +37,10 @@ class OrdersRecycleAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = Orderslist[position]
-        holder.placedDate.text = item.orderDate
-        holder.status.text = item.satus
-        holder.number.text = item.orderNum
-        holder.total.text = item.total
+        holder.placedDate.text = item.order_date.toString()
+        holder.status.text = item.status
+        holder.number.text = item.order_id
+        holder.total.text = item.cost
     }
 
     override fun getItemCount(): Int {

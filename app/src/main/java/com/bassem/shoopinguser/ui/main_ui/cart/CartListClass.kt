@@ -16,8 +16,11 @@ import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.HashMap
 
 class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
     var _binding: CartFragmentBinding? = null
@@ -30,6 +33,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     lateinit var userID: String
     lateinit var auth: FirebaseAuth
     lateinit var db: FirebaseFirestore
+    var total: Int? = null
     var cartListIds: Any? = null
 
 
@@ -67,10 +71,16 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         bottomNavigationView.visibility = View.GONE
         RecycleSetup()
         getCart()
+
+        //listener
         binding!!.checkOut.setOnClickListener {
         }
         binding!!.emptyCartbutton.setOnClickListener {
             findNavController().navigate(R.id.action_cartListClass_to_Home)
+        }
+
+        binding!!.checkOut.setOnClickListener {
+            placeOrder()
         }
 
 
@@ -166,9 +176,13 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         firebaseUpdatedList.removeAt(position)
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
-        cartAdapter!!.notifyItemRemoved(position)
-        updatePrice()
-        hideEmptycart()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    cartAdapter!!.notifyItemRemoved(position)
+                    updatePrice()
+                    hideEmptycart()
+                }
+            }
 
     }
 
@@ -176,7 +190,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val sum = cartListList!!.sumBy { it.price!!.toInt() }
         binding!!.subtotal.text = "$sum EGP"
         val dilveryFees = 25
-        val total = sum + dilveryFees
+        total = sum + dilveryFees
         binding!!.totalCart.text = "$total EGP"
         println("$sum================$total")
     }
@@ -189,6 +203,49 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             binding!!.cartFullLayout.visibility = View.VISIBLE
             binding!!.emptyLayout.visibility = View.GONE
         }
+    }
+
+    fun placeOrder() {
+        loading()
+        val orderID = UUID.randomUUID().toString()
+        val orderHashMap = HashMap<String, Any>()
+        orderHashMap["items"] = cartListIds as List<String>
+        orderHashMap["cost"] = total.toString()
+        orderHashMap["status"] = "pending"
+        orderHashMap["order_date"] = FieldValue.serverTimestamp()
+        orderHashMap["order_id"] = orderID
+        orderHashMap["user_id"] = userID
+        db = FirebaseFirestore.getInstance()
+        db.collection("orders").document(orderID).set(orderHashMap).addOnCompleteListener {
+            if (it.isSuccessful) {
+                clearCart()
+            } else {
+                normal()
+            }
+        }
+    }
+
+    fun loading() {
+        binding!!.checkOut.visibility = View.GONE
+        binding!!.progressBar3.visibility = View.VISIBLE
+    }
+
+    fun normal() {
+        binding!!.checkOut.visibility = View.VISIBLE
+        binding!!.progressBar3.visibility = View.GONE
+    }
+
+    fun clearCart() {
+        val firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
+        firebaseUpdatedList.clear()
+
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("cart", firebaseUpdatedList)
+            .addOnCompleteListener {
+                println("Done")
+                normal()
+            }
+
     }
 
 

@@ -18,8 +18,10 @@ import com.bassem.shoopinguser.databinding.OrdersFragmentBinding
 import com.bassem.shoopinguser.models.FavoriteClass
 import com.bassem.shoopinguser.models.OrderClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
-class OrdersList : Fragment(R.layout.orders_fragment),OrdersRecycleAdapter.clickInterface {
+class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
     lateinit var recyclerView: RecyclerView
     lateinit var orderAdapter: OrdersRecycleAdapter
     lateinit var orderList: MutableList<OrderClass>
@@ -27,15 +29,14 @@ class OrdersList : Fragment(R.layout.orders_fragment),OrdersRecycleAdapter.click
     val binding get() = _binding
     lateinit var fabCart: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var db: FirebaseFirestore
+    lateinit var auth: FirebaseAuth
+    lateinit var userID: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderList = arrayListOf()
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
-        orderList.add(OrderClass("25 March 2011","500EGP","Pending","33131"))
+        userID = auth.currentUser!!.uid
+
 
     }
 
@@ -50,25 +51,24 @@ class OrdersList : Fragment(R.layout.orders_fragment),OrdersRecycleAdapter.click
 
     override fun onDetach() {
         super.onDetach()
-        bottomNavigationView.visibility=View.VISIBLE
+        bottomNavigationView.visibility = View.VISIBLE
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fabCart = activity!!.findViewById(R.id.cartFloating)
-        bottomNavigationView=activity!!.findViewById(R.id.bottomAppBar)
-        bottomNavigationView.visibility=View.GONE
+        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView.visibility = View.GONE
 
 
         recycleSetup()
 
 
-
     }
 
     fun recycleSetup() {
-        orderAdapter = OrdersRecycleAdapter(orderList,this)
+        orderAdapter = OrdersRecycleAdapter(orderList, this)
         recyclerView = view!!.findViewById(R.id.ordersRV)
         recyclerView.apply {
             adapter = orderAdapter
@@ -81,6 +81,12 @@ class OrdersList : Fragment(R.layout.orders_fragment),OrdersRecycleAdapter.click
 
     override fun click(position: Int) {
         findNavController().navigate(R.id.action_ordersList_to_tracking)
+    }
+
+    fun getOrders() {
+        db = FirebaseFirestore.getInstance()
+
+
     }
 
 }

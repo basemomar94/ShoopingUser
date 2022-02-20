@@ -149,10 +149,13 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val cartList = value.get("cart")
-                val cartCount = (cartList as List<String>).size
-                if (cartCount != null) {
-                   fabCart.count = cartCount
+                if (cartList!=null){
+                    val cartCount = (cartList as List<String>).size
+                    if (cartCount != null) {
+                        fabCart.count = cartCount
+                    }
                 }
+
             }
         }
     }
@@ -162,8 +165,8 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val favList = value.get("fav")
-                val favtCount = (favList as List<String>).size
-                if (favtCount != null) {
+                if (favList!=null){
+                    val favtCount = (favList as List<String>).size
                     bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
                         badgeTextColor = Color.DKGRAY
                         if (favtCount == 0) {
@@ -179,6 +182,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                         }
                     }
                 }
+
             }
         }
 
