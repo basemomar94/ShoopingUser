@@ -4,8 +4,8 @@ import android.widget.ImageView
 
 data class CartClass(
     val title: String?=null,
-    val price: String?=null,
-    var amount: Int = 1,
+    var price: String?=null,
+    var numberOFItems: Int = 1,
     val photo:String?=null,
     val id :String?=null
 )

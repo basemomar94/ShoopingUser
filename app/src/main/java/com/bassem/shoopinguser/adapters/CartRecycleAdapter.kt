@@ -1,7 +1,6 @@
 package com.bassem.shoopinguser.adapters
 
 import android.content.Context
-import android.nfc.NfcAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,8 +55,8 @@ class CartRecycleAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val cartItem = cartList[position]
         holder.title.text = cartItem.title
-        holder.amount.text = cartItem.amount.toString()
-        holder.price.text = "${(cartItem.amount)*(cartItem.price!!.toInt())} EGP"
+        holder.amount.text = cartItem.numberOFItems.toString()
+        holder.price.text = "${(cartItem.numberOFItems)*(cartItem.price!!.toInt())} EGP"
         val url = cartItem.photo
         Glide.with(context).load(url).into(holder.photo)
     }

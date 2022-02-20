@@ -153,6 +153,7 @@
             android:orientation="horizontal">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/favExpand"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_gravity="center"
@@ -162,11 +163,11 @@
                 app:cardCornerRadius="50dp">
 
                 <ImageView
-                    android:id="@+id/imageView7"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:id="@+id/favImg"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="center"
-                    android:layout_margin="16dp"
+                    android:layout_margin="8dp"
                     app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
             </androidx.cardview.widget.CardView>
 
@@ -193,6 +194,7 @@
                 android:visibility="gone" />
 
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

@@ -6,13 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
+import com.bassem.shoopinguser.databinding.AccountFragmentBinding.inflate
 import com.bassem.shoopinguser.databinding.ExpandFragmentBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
@@ -57,7 +62,7 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fabCounterFab = activity!!.findViewById(R.id.cartFloating)
-      //  fabCounterFab.visibility = View.GONE
+        fabCounterFab.visibility = View.GONE
         bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
 
@@ -71,12 +76,17 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
         binding!!.checkCart.setOnClickListener {
             findNavController().navigate(R.id.action_expandView_to_cartListClass)
         }
+        binding!!.favExpand.setOnClickListener {
+            if (documentID != "fail") {
+                addtoFavorite(documentID)
+            }
+        }
 
     }
 
     override fun onResume() {
         super.onResume()
-       // fabCounterFab.visibility = View.GONE
+        fabCounterFab.visibility = View.GONE
         bottomNavigationView.visibility = View.GONE
 
 
@@ -111,10 +121,33 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(documentID))
             .addOnCompleteListener {
-                Snackbar.make(requireView(), "added to your cart", Snackbar.LENGTH_LONG).show()
-               // binding!!.cartExpand.visibility = View.GONE
-              //  binding!!.checkCart.visibility = View.VISIBLE
+                showButtonSheet()
+            }
 
+    }
+
+    fun showButtonSheet() {
+        val dialog = BottomSheetDialog(context!!)
+        val v = layoutInflater.inflate(R.layout.order_bottom_sheet, null)
+        dialog.setContentView(v)
+        val continine = dialog.findViewById<Button>(R.id.continueDialog)
+        continine!!.setOnClickListener {
+            dialog.dismiss()
+        }
+        val cart = dialog.findViewById<Button>(R.id.cartDailog)
+        cart!!.setOnClickListener {
+            findNavController().navigate(R.id.action_expandView_to_cartListClass)
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
+    fun addtoFavorite(id: String) {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
+            .addOnCompleteListener {
+                val favorite = AppCompatResources.getDrawable(context!!, R.drawable.favoritered)
+                binding!!.favImg.setImageDrawable(favorite)
 
             }
 

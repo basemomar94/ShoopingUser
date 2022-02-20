@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.main_ui.home
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -12,8 +13,8 @@ import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.models.ItemsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import kotlinx.android.synthetic.main.activity_home_container.*
 
 class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface {
     lateinit var recyclerView: RecyclerView
@@ -22,10 +23,14 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     lateinit var fabCart: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var db: FirebaseFirestore
+    lateinit var userID: String
+    lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        auth = FirebaseAuth.getInstance()
+        userID = auth.currentUser!!.uid
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -46,9 +51,10 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         super.onViewCreated(view, savedInstanceState)
         fabCart = activity!!.findViewById(R.id.cartFloating)
         fabCart.visibility = View.VISIBLE
-        fabCart.count = 2
         itemsList = arrayListOf()
         recycleSetup()
+        getCartCounter()
+        getFavCounter()
 
         getItemsFromFirebase()
 
@@ -95,13 +101,10 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     override fun makeFavorite(postion: Int) {
         val item = itemsList[postion]
+        val id = item.id
         item.favorite = !item.favorite
         adapter.notifyItemChanged(postion)
-
-        println(postion)
-
-        println(itemsList.size)
-
+        addtoFavorite(id!!)
     }
 
     fun goToView(documentid: String) {
@@ -138,6 +141,56 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
             }
         }
+
+    }
+
+    fun getCartCounter() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).addSnapshotListener { value, error ->
+            if (value != null) {
+                val cartList = value.get("cart")
+                val cartCount = (cartList as List<String>).size
+                if (cartCount != null) {
+                   fabCart.count = cartCount
+                }
+            }
+        }
+    }
+
+    fun getFavCounter() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).addSnapshotListener { value, error ->
+            if (value != null) {
+                val favList = value.get("fav")
+                val favtCount = (favList as List<String>).size
+                if (favtCount != null) {
+                    bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
+                        badgeTextColor = Color.DKGRAY
+                        if (favtCount == 0) {
+                            backgroundColor = Color.parseColor("#FFFFFF")
+                            clearNumber()
+                            clearColorFilter()
+
+                        } else {
+                            number = favtCount
+                            backgroundColor = Color.parseColor("#FFA56D")
+
+
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun addtoFavorite(id: String) {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
+            .addOnCompleteListener {
+
+
+            }
 
     }
 

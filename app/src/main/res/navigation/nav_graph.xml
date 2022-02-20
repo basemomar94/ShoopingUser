@@ -35,7 +35,11 @@
         android:id="@+id/cartListClass"
         android:name="com.bassem.shoopinguser.ui.main_ui.cart.CartListClass"
         android:label="cart_fragment"
-        tools:layout="@layout/cart_fragment" />
+        tools:layout="@layout/cart_fragment" >
+        <action
+            android:id="@+id/action_cartListClass_to_Home"
+            app:destination="@id/Home" />
+    </fragment>
     <fragment
         android:id="@+id/Favorite"
         android:name="com.bassem.shoopinguser.ui.main_ui.favorite.FavoriteList"

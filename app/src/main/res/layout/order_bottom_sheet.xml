@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="match_parent"
+        android:layout_height="221dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/checkcart" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="Item has been added to Cart"
+        android:textAlignment="center"
+        android:textColor="@color/orange"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/cartDailog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bttuon"
+        android:text="Check Cart" />
+
+    <Button
+        android:id="@+id/continueDialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bttuon"
+        android:text="Continue shopping" />
+</LinearLayout>

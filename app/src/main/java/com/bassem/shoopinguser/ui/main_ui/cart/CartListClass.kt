@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
@@ -14,6 +15,7 @@ import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 
@@ -67,6 +69,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         getCart()
         binding!!.checkOut.setOnClickListener {
         }
+        binding!!.emptyCartbutton.setOnClickListener {
+            findNavController().navigate(R.id.action_cartListClass_to_Home)
+        }
 
 
 
@@ -101,8 +106,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     override fun add(position: Int) {
         val itemCart = cartListList!![position]
-        if (itemCart.amount < 10) {
-            itemCart.amount++
+        if (itemCart.numberOFItems < 10) {
+            itemCart.numberOFItems++
+            println(itemCart.numberOFItems)
             updatePrice()
 
         }
@@ -111,8 +117,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     override fun minus(position: Int) {
         val itemCart = cartListList!![position]
-        if (itemCart.amount > 1) {
-            itemCart.amount--
+        if (itemCart.numberOFItems > 1) {
+            itemCart.numberOFItems--
             updatePrice()
 
         }
@@ -122,13 +128,13 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     fun getCart() {
         db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userID).addSnapshotListener { value, error ->
-            if (error != null) {
-                println(error.message)
+        db.collection("users").document(userID).get().addOnCompleteListener {
+            if (it.exception != null) {
+                println(it.exception!!.message)
             } else {
                 Thread(Runnable {
 
-                    cartListIds = value!!.get("cart")
+                    cartListIds = it.result!!.get("cart")
                     if (cartListIds != null) {
                         for (item in cartListIds as List<String>) {
                             db.collection("items").document(item).get().addOnSuccessListener {
@@ -138,6 +144,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                                 }
                                 activity!!.runOnUiThread {
                                     cartAdapter!!.notifyDataSetChanged()
+                                    hideEmptycart()
                                     updatePrice()
                                     println("Inside ui")
                                 }
@@ -161,6 +168,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
         cartAdapter!!.notifyItemRemoved(position)
         updatePrice()
+        hideEmptycart()
 
     }
 
@@ -171,6 +179,16 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val total = sum + dilveryFees
         binding!!.totalCart.text = "$total EGP"
         println("$sum================$total")
+    }
+
+    fun hideEmptycart() {
+        if (cartListList!!.isEmpty()) {
+            binding!!.cartFullLayout.visibility = View.GONE
+            binding!!.emptyLayout.visibility = View.VISIBLE
+        } else {
+            binding!!.cartFullLayout.visibility = View.VISIBLE
+            binding!!.emptyLayout.visibility = View.GONE
+        }
     }
 
 

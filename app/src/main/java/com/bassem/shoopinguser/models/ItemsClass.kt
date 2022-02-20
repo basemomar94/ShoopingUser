@@ -5,6 +5,6 @@ data class ItemsClass(
     val photo:String?=null,
     val price:String?=null,
     var favorite:Boolean=false,
-    val amount:String?=null,
+    val amount:Long?=null,
     val id :String?=null
 )
