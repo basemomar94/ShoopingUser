@@ -154,15 +154,25 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                             hideEmptycart()
                         }
                     } else {
+                        var i = 0
                         for (item in cartListIds as List<String>) {
                             db.collection("items").document(item).get().addOnSuccessListener {
                                 val item = it.toObject(CartClass::class.java)
                                 println("$item ==========ee")
-                                cartListList!!.add(item!!)
+                                if (item != null) {
+                                    cartListList!!.add(item)
+
+                                } else {
+                                    detleteAllcart()
+                                }
                                 activity!!.runOnUiThread {
                                     cartAdapter!!.notifyDataSetChanged()
-                                    updatePrice()
-                                    showCart()
+                                    i++
+                                    if (i == (cartListIds as List<*>).size) {
+                                        updatePrice()
+                                        showCart()
+                                    }
+
 
                                 }
 
@@ -184,7 +194,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         cartListList!!.removeAt(position)
         var firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
         firebaseUpdatedList.removeAt(position)
-        if (firebaseUpdatedList.isEmpty()){
+        if (firebaseUpdatedList.isEmpty()) {
             hideEmptycart()
         }
         db = FirebaseFirestore.getInstance()
@@ -281,6 +291,13 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
         dialog.show()
 
+    }
+
+    fun detleteAllcart() {
+        val emptlyList: List<String>
+        emptlyList = arrayListOf()
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("cart",emptlyList)
     }
 
 

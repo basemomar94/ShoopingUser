@@ -103,11 +103,17 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
         db.collection("orders").whereEqualTo("user_id", userID).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 Thread(Runnable {
+                    var i = 0
                     for (dc in it.result!!.documentChanges) {
                         if (dc.type == DocumentChange.Type.ADDED) {
                             orderList.add(dc.document.toObject(OrderClass::class.java))
                             activity!!.runOnUiThread {
+                                i++
                                 orderAdapter.notifyDataSetChanged()
+                                if (i == orderList.size) {
+                                    binding!!.ordersRV.visibility = View.VISIBLE
+                                    binding!!.loadingSpinner4.visibility = View.GONE
+                                }
                             }
 
                         }

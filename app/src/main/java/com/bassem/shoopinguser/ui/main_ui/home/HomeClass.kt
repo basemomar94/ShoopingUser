@@ -11,12 +11,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
+import com.bassem.shoopinguser.databinding.HomeFragmentBinding
 import com.bassem.shoopinguser.models.ItemsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
 class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface {
+    lateinit var _binding: HomeFragmentBinding
+    val binding get() = _binding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: HomeRecycleAdapter
     lateinit var itemsList: MutableList<ItemsClass>
@@ -42,7 +45,8 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return super.onCreateView(inflater, container, savedInstanceState)
+        _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        return binding.root
 
 
     }
@@ -127,16 +131,24 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                 println(error.message)
             } else {
                 Thread(Runnable {
+                    var i = 0
                     for (dc: DocumentChange in value!!.documentChanges) {
                         if (dc.type == DocumentChange.Type.ADDED) {
                             itemsList.add(dc.document.toObject(ItemsClass::class.java))
                             println("LOOOOOP")
                         }
+                        activity!!.runOnUiThread {
+                            i++
+                            adapter.notifyDataSetChanged()
+                            if (i == itemsList.size) {
+                                binding.homeRV.visibility = View.VISIBLE
+                                binding.shimmerLayout.visibility = View.GONE
+
+                            }
+                        }
 
                     }
-                    activity!!.runOnUiThread {
-                        adapter.notifyDataSetChanged()
-                    }
+
                 }).start()
 
             }
@@ -149,7 +161,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val cartList = value.get("cart")
-                if (cartList!=null){
+                if (cartList != null) {
                     val cartCount = (cartList as List<String>).size
                     if (cartCount != null) {
                         fabCart.count = cartCount
@@ -165,7 +177,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val favList = value.get("fav")
-                if (favList!=null){
+                if (favList != null) {
                     val favtCount = (favList as List<String>).size
                     bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
                         badgeTextColor = Color.DKGRAY

@@ -75,13 +75,19 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                     binding!!.subTotal.text=(total.toString().toInt()-10).toString() + " EGP"
                     val itemsList = it.result!!.get("items")
                     if (itemsList != null) {
+                        var i =0
                         for (item in itemsList as List<*>) {
                             db.collection("items").document(item.toString()).get()
                                 .addOnSuccessListener {
                                     val item = it.toObject(OrderedItem::class.java)
                                     orderedList.add(item!!)
                                     activity!!.runOnUiThread {
+                                        i++
                                         orderedAdapter.notifyDataSetChanged()
+                                        if (i== (itemsList as List<*>).size){
+                                            binding!!.trackLayout.visibility=View.VISIBLE
+                                            binding!!.loadingSpinner3.visibility=View.GONE
+                                        }
                                     }
 
 

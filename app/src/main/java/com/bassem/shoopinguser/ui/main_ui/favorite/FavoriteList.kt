@@ -124,6 +124,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
 
                         }
                     } else {
+                        var i = 0
                         for (item in favListIds as List<String>) {
                             db.collection("items").document(item).get().addOnSuccessListener {
                                 val item = it.toObject(FavoriteClass::class.java)
@@ -132,7 +133,10 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
                                 }
                                 activity!!.runOnUiThread {
                                     favAdapter.notifyDataSetChanged()
-                                    showFav()
+                                    i++
+                                    if (i==(favListIds as List<*>).size){
+                                        showFav()
+                                    }
                                 }
                             }
                         }
