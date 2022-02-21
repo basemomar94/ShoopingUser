@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +16,7 @@ import com.bassem.shoopinguser.adapters.CartRecycleAdapter
 import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FieldValue
@@ -141,26 +144,33 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         db.collection("users").document(userID).get().addOnCompleteListener {
             if (it.exception != null) {
                 println(it.exception!!.message)
+                Toast.makeText(context!!, it.exception!!.message, Toast.LENGTH_LONG).show()
             } else {
                 Thread(Runnable {
 
                     cartListIds = it.result!!.get("cart")
-                    if (cartListIds != null) {
+                    if ((cartListIds as List<*>).isEmpty()) {
+                        activity!!.runOnUiThread {
+                            hideEmptycart()
+                        }
+                    } else {
                         for (item in cartListIds as List<String>) {
                             db.collection("items").document(item).get().addOnSuccessListener {
                                 val item = it.toObject(CartClass::class.java)
-                                if (item != null) {
-                                    cartListList!!.add(item)
-                                }
+                                println("$item ==========ee")
+                                cartListList!!.add(item!!)
                                 activity!!.runOnUiThread {
                                     cartAdapter!!.notifyDataSetChanged()
-                                    hideEmptycart()
                                     updatePrice()
-                                    println("Inside ui")
+                                    showCart()
+
                                 }
+
                             }
                         }
+
                     }
+
 
                 }).start()
 
@@ -174,13 +184,15 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         cartListList!!.removeAt(position)
         var firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
         firebaseUpdatedList.removeAt(position)
+        if (firebaseUpdatedList.isEmpty()){
+            hideEmptycart()
+        }
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     cartAdapter!!.notifyItemRemoved(position)
                     updatePrice()
-                    hideEmptycart()
                 }
             }
 
@@ -196,13 +208,15 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun hideEmptycart() {
-        if (cartListList!!.isEmpty()) {
-            binding!!.cartFullLayout.visibility = View.GONE
-            binding!!.emptyLayout.visibility = View.VISIBLE
-        } else {
-            binding!!.cartFullLayout.visibility = View.VISIBLE
-            binding!!.emptyLayout.visibility = View.GONE
-        }
+        binding!!.cartFullLayout.visibility = View.GONE
+        binding!!.emptyLayout.visibility = View.VISIBLE
+        binding!!.loadingSpinner2.visibility = View.GONE
+    }
+
+    fun showCart() {
+        binding!!.cartFullLayout.visibility = View.VISIBLE
+        binding!!.emptyLayout.visibility = View.GONE
+        binding!!.loadingSpinner2.visibility = View.GONE
     }
 
     fun placeOrder() {
@@ -242,9 +256,30 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
             .addOnCompleteListener {
-                println("Done")
+                showBottomSheet()
                 normal()
             }
+
+    }
+
+    fun showBottomSheet() {
+        val dialog = BottomSheetDialog(context!!)
+        val v = layoutInflater.inflate(R.layout.confirm_bottom_sheet, null)
+        dialog.setContentView(v)
+        val contine = dialog.findViewById<Button>(R.id.continueSheet)
+        contine!!.setOnClickListener {
+            findNavController().navigate(R.id.action_cartListClass_to_Home)
+            dialog.dismiss()
+
+        }
+        val track = dialog.findViewById<Button>(R.id.trackSheet)
+        track!!.setOnClickListener {
+            findNavController().navigate(R.id.action_cartListClass_to_ordersList)
+            dialog.dismiss()
+
+        }
+
+        dialog.show()
 
     }
 

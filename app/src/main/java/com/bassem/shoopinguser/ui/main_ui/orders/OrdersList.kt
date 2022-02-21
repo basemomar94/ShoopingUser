@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ import com.bassem.shoopinguser.models.FavoriteClass
 import com.bassem.shoopinguser.models.OrderClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 
 class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
@@ -35,6 +37,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderList = arrayListOf()
+        auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
 
 
@@ -52,7 +55,13 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     override fun onDetach() {
         super.onDetach()
         bottomNavigationView.visibility = View.VISIBLE
+        orderList.clear()
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        orderList.clear()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,6 +72,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
 
 
         recycleSetup()
+        getOrders()
 
 
     }
@@ -80,11 +90,33 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
     }
 
     override fun click(position: Int) {
-        findNavController().navigate(R.id.action_ordersList_to_tracking)
+        val order = orderList[position].order_id
+        val bundle = Bundle()
+        bundle.putString("order", order)
+        val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+        navController.navigate(R.id.action_ordersList_to_tracking, bundle)
+
     }
 
     fun getOrders() {
         db = FirebaseFirestore.getInstance()
+        db.collection("orders").whereEqualTo("user_id", userID).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                Thread(Runnable {
+                    for (dc in it.result!!.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            orderList.add(dc.document.toObject(OrderClass::class.java))
+                            activity!!.runOnUiThread {
+                                orderAdapter.notifyDataSetChanged()
+                            }
+
+                        }
+                    }
+                }).start()
+
+
+            }
+        }
 
 
     }

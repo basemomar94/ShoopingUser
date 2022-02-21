@@ -132,6 +132,7 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
         dialog.setContentView(v)
         val continine = dialog.findViewById<Button>(R.id.continueDialog)
         continine!!.setOnClickListener {
+            findNavController().navigate(R.id.action_expandView_to_Home)
             dialog.dismiss()
         }
         val cart = dialog.findViewById<Button>(R.id.cartDailog)

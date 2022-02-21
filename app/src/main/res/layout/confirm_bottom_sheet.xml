@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="221dp"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/order" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="You'll get your oder soon!"
+        android:textAlignment="center"
+        android:textColor="@color/orange"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/trackSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bttuon"
+        android:text="Track Orders"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/continueSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bttuon"
+        android:text="Continue Shopping"
+        android:textAllCaps="false" />
+</LinearLayout>

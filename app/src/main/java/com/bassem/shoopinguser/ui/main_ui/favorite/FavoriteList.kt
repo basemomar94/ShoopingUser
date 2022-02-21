@@ -104,7 +104,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
 
     override fun addtoCart(position: Int) {
         val itemID = favoriteList[position].id
-        addtoCart(itemID!!)
+        addtoCart(itemID!!, position)
 
     }
 
@@ -116,8 +116,14 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
             } else {
                 Thread(kotlinx.coroutines.Runnable {
 
+
                     favListIds = it.result!!.get("fav")
-                    if (favListIds != null) {
+                    if ((favListIds as List<*>).isEmpty()) {
+                        activity!!.runOnUiThread {
+                            hideEmptyFav()
+
+                        }
+                    } else {
                         for (item in favListIds as List<String>) {
                             db.collection("items").document(item).get().addOnSuccessListener {
                                 val item = it.toObject(FavoriteClass::class.java)
@@ -126,7 +132,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
                                 }
                                 activity!!.runOnUiThread {
                                     favAdapter.notifyDataSetChanged()
-
+                                    showFav()
                                 }
                             }
                         }
@@ -143,18 +149,34 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
     fun removeFromFav(position: Int) {
         favoriteList.removeAt(position)
         var firebaseUpdatedList: MutableList<String> = favListIds as MutableList<String>
+        if (firebaseUpdatedList.isEmpty()) {
+            hideEmptyFav()
+        }
         firebaseUpdatedList.removeAt(position)
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", firebaseUpdatedList)
         favAdapter.notifyItemRemoved(position)
     }
 
-    fun addtoCart(id: String) {
+    fun addtoCart(id: String, position: Int) {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
+                removeFromFav(position)
             }
 
+    }
+
+    fun hideEmptyFav() {
+        binding!!.emptyFav.visibility = View.VISIBLE
+        binding!!.loadingSpinner.visibility = View.GONE
+        binding!!.favoriteRv.visibility = View.GONE
+    }
+
+    fun showFav() {
+        binding!!.emptyFav.visibility = View.GONE
+        binding!!.favoriteRv.visibility = View.VISIBLE
+        binding!!.loadingSpinner.visibility = View.GONE
     }
 
 

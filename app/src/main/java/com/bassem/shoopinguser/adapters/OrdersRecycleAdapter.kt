@@ -1,12 +1,19 @@
 package com.bassem.shoopinguser.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.models.OrderClass
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatter.ofPattern
+import java.util.*
+import java.util.logging.Level.parse
 
 class OrdersRecycleAdapter(
     val Orderslist: MutableList<OrderClass>,
@@ -35,12 +42,17 @@ class OrdersRecycleAdapter(
         return ViewHolder(v)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = Orderslist[position]
-        holder.placedDate.text = item.order_date.toString()
+        val date = item.order_date
+        val locale = Locale.US
+        val dateFormater = SimpleDateFormat("dd-MM-yyyy", locale)
+
+        holder.placedDate.text = date.toString()
         holder.status.text = item.status
         holder.number.text = item.order_id
-        holder.total.text = item.cost
+        holder.total.text = item.cost + " EGP"
     }
 
     override fun getItemCount(): Int {

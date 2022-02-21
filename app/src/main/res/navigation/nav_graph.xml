@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_expandView_to_cartListClass"
             app:destination="@id/cartListClass" />
+        <action
+            android:id="@+id/action_expandView_to_Home"
+            app:destination="@id/Home" />
     </fragment>
     <fragment
         android:id="@+id/cartListClass"
@@ -39,6 +42,9 @@
         <action
             android:id="@+id/action_cartListClass_to_Home"
             app:destination="@id/Home" />
+        <action
+            android:id="@+id/action_cartListClass_to_ordersList"
+            app:destination="@id/ordersList" />
     </fragment>
     <fragment
         android:id="@+id/Favorite"
