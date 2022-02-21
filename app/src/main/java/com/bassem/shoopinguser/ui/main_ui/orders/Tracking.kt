@@ -85,9 +85,15 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                 Thread(Runnable {
                     val total = it.result!!.get("cost")
                     val status = it.result!!.get("status")
+                    val name = it.result!!.get("name")
+                    val address = it.result!!.get("address")
+                    val phone = it.result!!.get("phone")
                     tracking(status.toString())
                     binding!!.total.text = total.toString() + " EGP"
                     binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
+                    binding!!.trackName.text = name.toString()
+                    binding!!.trackAdress.text = address.toString()
+                    binding!!.trackPhone.text = phone.toString()
                     val itemsList = it.result!!.get("items")
                     if (itemsList != null) {
                         var i = 0

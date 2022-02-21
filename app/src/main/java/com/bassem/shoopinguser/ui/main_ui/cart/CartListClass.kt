@@ -39,6 +39,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     var adress: String? = null
     var phone: String? = null
     var total: Int? = null
+    var name: String? = null
     var cartListIds: Any? = null
 
 
@@ -152,36 +153,42 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                 Thread(Runnable {
 
                     cartListIds = it.result!!.get("cart")
-                    if ((cartListIds as List<*>).isEmpty()) {
+                    if (cartListIds != null) {
+                        if ((cartListIds as List<*>).isEmpty()) {
+                            activity!!.runOnUiThread {
+                                hideEmptycart()
+                            }
+                        } else {
+                            var i = 0
+                            for (item in cartListIds as List<String>) {
+                                db.collection("items").document(item).get().addOnSuccessListener {
+                                    val item = it.toObject(CartClass::class.java)
+                                    println("$item ==========ee")
+                                    if (item != null) {
+                                        cartListList!!.add(item)
+
+                                    } else {
+                                        detleteAllcart()
+                                    }
+                                    activity!!.runOnUiThread {
+                                        cartAdapter!!.notifyDataSetChanged()
+                                        i++
+                                        if (i == (cartListIds as List<*>).size) {
+                                            updatePrice()
+                                            showCart()
+                                        }
+
+
+                                    }
+
+                                }
+                            }
+
+                        }
+                    } else {
                         activity!!.runOnUiThread {
                             hideEmptycart()
                         }
-                    } else {
-                        var i = 0
-                        for (item in cartListIds as List<String>) {
-                            db.collection("items").document(item).get().addOnSuccessListener {
-                                val item = it.toObject(CartClass::class.java)
-                                println("$item ==========ee")
-                                if (item != null) {
-                                    cartListList!!.add(item)
-
-                                } else {
-                                    detleteAllcart()
-                                }
-                                activity!!.runOnUiThread {
-                                    cartAdapter!!.notifyDataSetChanged()
-                                    i++
-                                    if (i == (cartListIds as List<*>).size) {
-                                        updatePrice()
-                                        showCart()
-                                    }
-
-
-                                }
-
-                            }
-                        }
-
                     }
 
 
@@ -244,6 +251,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         orderHashMap["user_id"] = userID
         orderHashMap["address"] = adress!!
         orderHashMap["phone"] = phone!!
+        orderHashMap["name"] = name!!
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID).set(orderHashMap).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -308,8 +316,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     fun getShippingInfo() {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).get().addOnSuccessListener {
-            adress = it.getString("adress")
+            adress = it.getString("address")
             phone = it.getString("phone")
+            name = it.getString("name")
 
         }
     }
