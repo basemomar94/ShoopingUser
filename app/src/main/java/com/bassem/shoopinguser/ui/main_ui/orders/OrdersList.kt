@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
     lateinit var recyclerView: RecyclerView
@@ -100,7 +101,8 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
 
     fun getOrders() {
         db = FirebaseFirestore.getInstance()
-        db.collection("orders").whereEqualTo("user_id", userID).get().addOnCompleteListener {
+        db.collection("orders").whereEqualTo("user_id", userID)
+            .orderBy("order_date", Query.Direction.DESCENDING).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 Thread(Runnable {
                     var i = 0

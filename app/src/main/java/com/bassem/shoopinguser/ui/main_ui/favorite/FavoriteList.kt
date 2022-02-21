@@ -152,6 +152,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
 
     fun removeFromFav(position: Int) {
         favoriteList.removeAt(position)
+        favAdapter.notifyItemRemoved(position)
         var firebaseUpdatedList: MutableList<String> = favListIds as MutableList<String>
         if (firebaseUpdatedList.isEmpty()) {
             hideEmptyFav()
@@ -159,7 +160,6 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
         firebaseUpdatedList.removeAt(position)
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", firebaseUpdatedList)
-        favAdapter.notifyItemRemoved(position)
     }
 
     fun addtoCart(id: String, position: Int) {

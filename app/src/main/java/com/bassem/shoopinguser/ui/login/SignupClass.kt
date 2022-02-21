@@ -134,7 +134,7 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
         user["name"] = name
         user["id"] = userId
         user["mail"] = mail
-        user["adress"] = adress
+        user["address"] = adress
         user["phone"] = phone
         user["password"] = password
         db = FirebaseFirestore.getInstance()

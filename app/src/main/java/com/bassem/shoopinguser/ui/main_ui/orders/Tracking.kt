@@ -12,6 +12,7 @@ import com.bassem.shoopinguser.adapters.OrderedItemsAdapter
 import com.bassem.shoopinguser.databinding.TrackingFragmentBinding
 import com.bassem.shoopinguser.models.OrderedItem
 import com.google.firebase.firestore.FirebaseFirestore
+import com.kofigyan.stateprogressbar.StateProgressBar
 
 class Tracking : Fragment(R.layout.tracking_fragment) {
     var _binding: TrackingFragmentBinding? = null
@@ -41,18 +42,30 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tracking()
         recycleSetup()
         gettingItems()
 
 
     }
 
-    fun tracking() {
-        binding!!.trackingBar.stateDescriptionData.add(0, "Pending")
-        binding!!.trackingBar.stateDescriptionData.add(1, "Confirmed")
-        binding!!.trackingBar.stateDescriptionData.add(2, "Shipped")
-        binding!!.trackingBar.stateDescriptionData.add(3, "Arrived")
+    fun tracking(status: String) {
+        val track = binding!!.trackingBar
+        track.apply {
+            stateDescriptionData.add(0, "Pending")
+            stateDescriptionData.add(1, "Confirmed")
+            stateDescriptionData.add(2, "Shipped")
+            stateDescriptionData.add(3, "Arrived")
+            when (status) {
+                "pending" -> setCurrentStateNumber(StateProgressBar.StateNumber.ONE)
+                "confirmed" -> setCurrentStateNumber(StateProgressBar.StateNumber.TWO)
+                "shipped" -> setCurrentStateNumber(StateProgressBar.StateNumber.THREE)
+                "arrived" -> setCurrentStateNumber(StateProgressBar.StateNumber.FOUR)
+            }
+
+
+        }
+
+
     }
 
     fun recycleSetup() {
@@ -70,12 +83,14 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         db.collection("orders").document(orderID!!).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 Thread(Runnable {
-                    val total=it.result!!.get("cost")
-                    binding!!.total.text=total.toString() + " EGP"
-                    binding!!.subTotal.text=(total.toString().toInt()-10).toString() + " EGP"
+                    val total = it.result!!.get("cost")
+                    val status = it.result!!.get("status")
+                    tracking(status.toString())
+                    binding!!.total.text = total.toString() + " EGP"
+                    binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
                     val itemsList = it.result!!.get("items")
                     if (itemsList != null) {
-                        var i =0
+                        var i = 0
                         for (item in itemsList as List<*>) {
                             db.collection("items").document(item.toString()).get()
                                 .addOnSuccessListener {
@@ -84,9 +99,9 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                                     activity!!.runOnUiThread {
                                         i++
                                         orderedAdapter.notifyDataSetChanged()
-                                        if (i== (itemsList as List<*>).size){
-                                            binding!!.trackLayout.visibility=View.VISIBLE
-                                            binding!!.loadingSpinner3.visibility=View.GONE
+                                        if (i == (itemsList as List<*>).size) {
+                                            binding!!.trackLayout.visibility = View.VISIBLE
+                                            binding!!.loadingSpinner3.visibility = View.GONE
                                         }
                                     }
 
@@ -103,7 +118,6 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
         }
 
     }
-
 
 
 }

@@ -1,11 +1,13 @@
 package com.bassem.shoopinguser.adapters
 
+import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.models.OrderClass
@@ -24,6 +26,7 @@ class OrdersRecycleAdapter(
         val status = itemView.findViewById<TextView>(R.id.statusOrder)
         val total = itemView.findViewById<TextView>(R.id.totalOrder)
         val number = itemView.findViewById<TextView>(R.id.numOrder)
+        val card = itemView.findViewById<CardView>(R.id.statusCard)
 
         init {
 
@@ -50,7 +53,17 @@ class OrdersRecycleAdapter(
         val dateFormater = SimpleDateFormat("dd-MM-yyyy", locale)
 
         holder.placedDate.text = date.toString()
-        holder.status.text = item.status
+        val status = item.status
+        when (status) {
+            "pending" -> {
+                holder.card.setCardBackgroundColor(Color.YELLOW)
+                holder.status.setTextColor(Color.BLACK)
+            }
+            "confirmed" -> holder.card.setCardBackgroundColor(Color.BLUE)
+            "shipped" -> holder.card.setCardBackgroundColor(Color.CYAN)
+            "arrived" -> holder.card.setCardBackgroundColor(Color.GREEN)
+        }
+        holder.status.text = status
         holder.number.text = item.order_id
         holder.total.text = item.cost + " EGP"
     }

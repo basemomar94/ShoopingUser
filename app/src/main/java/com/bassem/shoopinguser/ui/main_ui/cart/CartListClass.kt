@@ -36,6 +36,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     lateinit var userID: String
     lateinit var auth: FirebaseAuth
     lateinit var db: FirebaseFirestore
+    var adress: String? = null
+    var phone: String? = null
     var total: Int? = null
     var cartListIds: Any? = null
 
@@ -45,6 +47,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
         cartListList = arrayListOf()
+        getShippingInfo()
 
 
     }
@@ -239,6 +242,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         orderHashMap["order_date"] = FieldValue.serverTimestamp()
         orderHashMap["order_id"] = orderID
         orderHashMap["user_id"] = userID
+        orderHashMap["address"] = adress!!
+        orderHashMap["phone"] = phone!!
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID).set(orderHashMap).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -297,7 +302,16 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val emptlyList: List<String>
         emptlyList = arrayListOf()
         db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userID).update("cart",emptlyList)
+        db.collection("users").document(userID).update("cart", emptlyList)
+    }
+
+    fun getShippingInfo() {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).get().addOnSuccessListener {
+            adress = it.getString("adress")
+            phone = it.getString("phone")
+
+        }
     }
 
 

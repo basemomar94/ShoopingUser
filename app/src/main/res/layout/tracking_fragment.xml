@@ -20,16 +20,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <com.kofigyan.stateprogressbar.StateProgressBar
             android:id="@+id/trackingBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            app:spb_currentStateDescriptionColor="@color/orange"
             app:spb_currentStateNumber="two"
             app:spb_enableAllStatesCompleted="false"
-            app:spb_maxStateNumber="four">
+            app:spb_maxStateNumber="four"
+            app:spb_stateBackgroundColor="@color/gray"
+            app:spb_stateDescriptionColor="@color/gray"
+            app:spb_stateForegroundColor="@color/orange"
+            app:spb_stateNumberForegroundColor="@color/white">
 
         </com.kofigyan.stateprogressbar.StateProgressBar>
 
