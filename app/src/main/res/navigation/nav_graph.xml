@@ -92,5 +92,9 @@
         android:id="@+id/tracking"
         android:name="com.bassem.shoopinguser.ui.main_ui.orders.Tracking"
         android:label="tracking_fragment"
-        tools:layout="@layout/tracking_fragment" />
+        tools:layout="@layout/tracking_fragment" >
+        <action
+            android:id="@+id/action_tracking_to_expandView"
+            app:destination="@id/expandView" />
+    </fragment>
 </navigation>
