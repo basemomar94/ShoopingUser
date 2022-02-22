@@ -103,29 +103,55 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
         db = FirebaseFirestore.getInstance()
         db.collection("orders").whereEqualTo("user_id", userID)
             .orderBy("order_date", Query.Direction.DESCENDING).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                Thread(Runnable {
-                    var i = 0
-                    for (dc in it.result!!.documentChanges) {
-                        if (dc.type == DocumentChange.Type.ADDED) {
-                            orderList.add(dc.document.toObject(OrderClass::class.java))
+                println(it.exception)
+                println(it.isSuccessful)
+                if (it.isSuccessful) {
+                    Thread(Runnable {
+                        var i = 0
+                        val orderCount = it.result!!.documentChanges.size
+                        if (orderCount == 0) {
                             activity!!.runOnUiThread {
-                                i++
-                                orderAdapter.notifyDataSetChanged()
-                                if (i == orderList.size) {
-                                    binding!!.ordersRV.visibility = View.VISIBLE
-                                    binding!!.loadingSpinner4.visibility = View.GONE
+                                hideOrders()
+
+                            }
+                        } else {
+                            for (dc in it.result!!.documentChanges) {
+
+                                if (dc.type == DocumentChange.Type.ADDED) {
+
+                                    orderList.add(dc.document.toObject(OrderClass::class.java))
+                                    activity!!.runOnUiThread {
+                                        i++
+
+                                        orderAdapter.notifyDataSetChanged()
+                                        println(orderList.size)
+                                        if (i == orderList.size) {
+                                            showOrders()
+                                        }
+                                    }
+
                                 }
                             }
-
                         }
-                    }
-                }).start()
+
+                    }).start()
 
 
+                } else {
+                }
             }
-        }
 
+
+    }
+
+    fun showOrders() {
+        binding!!.ordersRV.visibility = View.VISIBLE
+        binding!!.loadingSpinner4.visibility = View.GONE
+    }
+
+    fun hideOrders() {
+        binding!!.loadingSpinner4.visibility = View.GONE
+        binding!!.emptyOrder.visibility = View.VISIBLE
 
     }
 

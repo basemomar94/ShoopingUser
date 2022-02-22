@@ -20,6 +20,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/emptyOrder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="273dp"
+            android:src="@drawable/touch"
+            app:srcCompat="@drawable/ordere" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="You haven't ordered yet!"
+            android:textAlignment="center"
+            android:textColor="@color/orange"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/startShop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/bttuon"
+            android:text="Start Shopping"
+            android:textAllCaps="false" />
+    </LinearLayout>
 </LinearLayout>
 
 

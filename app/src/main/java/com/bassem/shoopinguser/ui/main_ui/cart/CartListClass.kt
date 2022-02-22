@@ -243,6 +243,15 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         loading()
         val orderID = UUID.randomUUID().toString()
         val orderHashMap = HashMap<String, Any>()
+        var countList: MutableList<String>? = null
+        countList = arrayListOf()
+
+        cartListList!!.forEachIndexed { index, cartClass ->
+            val count = cartListList!![index].numberOFItems.toString()
+            println(count)
+            countList!!.add(count)
+        }
+        orderHashMap["count"] = countList!!
         orderHashMap["items"] = cartListIds as List<String>
         orderHashMap["cost"] = total.toString()
         orderHashMap["status"] = "pending"

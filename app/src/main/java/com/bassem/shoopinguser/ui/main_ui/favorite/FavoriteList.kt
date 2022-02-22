@@ -59,6 +59,9 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
         fabCart.setOnClickListener {
             findNavController().navigate(R.id.action_Favorite_to_cartListClass)
         }
+        binding!!.startShop.setOnClickListener {
+            findNavController().navigate(R.id.action_Favorite_to_Home)
+        }
 
     }
 
@@ -118,7 +121,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
 
 
                     favListIds = it.result!!.get("fav")
-                    if (favListIds!=null){
+                    if (favListIds != null) {
                         if ((favListIds as List<*>).isEmpty()) {
                             activity!!.runOnUiThread {
                                 hideEmptyFav()
@@ -135,7 +138,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
                                     activity!!.runOnUiThread {
                                         favAdapter.notifyDataSetChanged()
                                         i++
-                                        if (i==(favListIds as List<*>).size){
+                                        if (i == (favListIds as List<*>).size) {
                                             showFav()
                                         }
                                     }

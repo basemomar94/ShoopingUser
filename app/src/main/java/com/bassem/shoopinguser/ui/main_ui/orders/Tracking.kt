@@ -88,6 +88,7 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                     val name = it.result!!.get("name")
                     val address = it.result!!.get("address")
                     val phone = it.result!!.get("phone")
+                    val countList = it.result!!.get("count")
                     tracking(status.toString())
                     binding!!.total.text = total.toString() + " EGP"
                     binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
@@ -104,11 +105,17 @@ class Tracking : Fragment(R.layout.tracking_fragment) {
                                     orderedList.add(item!!)
                                     activity!!.runOnUiThread {
                                         i++
-                                        orderedAdapter.notifyDataSetChanged()
                                         if (i == (itemsList as List<*>).size) {
                                             binding!!.trackLayout.visibility = View.VISIBLE
                                             binding!!.loadingSpinner3.visibility = View.GONE
                                         }
+                                       /* for (count in (countList as List<String>)) {
+                                            orderedList.add(OrderedItem(count = count))
+
+                                        } */
+                                        orderedAdapter.notifyDataSetChanged()
+
+
                                     }
 
 
