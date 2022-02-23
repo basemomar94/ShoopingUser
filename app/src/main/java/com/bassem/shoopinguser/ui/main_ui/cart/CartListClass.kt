@@ -125,21 +125,25 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val itemCart = cartListList!![position]
         if (itemCart.numberOFItems < 10) {
             itemCart.numberOFItems++
-            println(itemCart.numberOFItems)
-            updatePrice()
+            itemCart.currentPrice = ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
+            val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
+            binding!!.totalCart.text= "$sum EGP"
+            cartAdapter!!.notifyItemChanged(position)
 
         }
-        cartAdapter!!.notifyItemChanged(position)
     }
 
     override fun minus(position: Int) {
         val itemCart = cartListList!![position]
         if (itemCart.numberOFItems > 1) {
             itemCart.numberOFItems--
-            updatePrice()
+            itemCart.currentPrice = ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
+            val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
+            binding!!.totalCart.text= "$sum EGP"
+            cartAdapter!!.notifyItemChanged(position)
+
 
         }
-        cartAdapter!!.notifyItemChanged(position)
 
     }
 
@@ -219,9 +223,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun updatePrice() {
-        val sum = cartListList!!.sumBy { it.price!!.toInt() }
+        val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
         binding!!.subtotal.text = "$sum EGP"
-        val dilveryFees = 25
+        val dilveryFees = 0
         total = sum + dilveryFees
         binding!!.totalCart.text = "$total EGP"
         println("$sum================$total")
@@ -253,7 +257,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         }
         orderHashMap["count"] = countList!!
         orderHashMap["items"] = cartListIds as List<String>
-        orderHashMap["cost"] = total.toString()
+        orderHashMap["cost"] = binding!!.totalCart.text
         orderHashMap["status"] = "pending"
         orderHashMap["order_date"] = FieldValue.serverTimestamp()
         orderHashMap["order_id"] = orderID

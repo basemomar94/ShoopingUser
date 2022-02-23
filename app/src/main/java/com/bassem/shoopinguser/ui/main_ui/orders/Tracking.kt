@@ -107,7 +107,7 @@ class Tracking : Fragment(R.layout.tracking_fragment), OrderedItemsAdapter.order
                     }
                     tracking(status.toString())
                     binding!!.total.text = total.toString() + " EGP"
-                    binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
+                //    binding!!.subTotal.text = (total.toString().toInt() - 10).toString() + " EGP"
                     binding!!.trackName.text = name.toString()
                     binding!!.trackAdress.text = address.toString()
                     binding!!.trackPhone.text = phone.toString()

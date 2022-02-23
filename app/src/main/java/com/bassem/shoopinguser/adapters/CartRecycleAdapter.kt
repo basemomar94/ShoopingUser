@@ -56,7 +56,8 @@ class CartRecycleAdapter(
         val cartItem = cartList[position]
         holder.title.text = cartItem.title
         holder.amount.text = cartItem.numberOFItems.toString()
-        holder.price.text = "${(cartItem.numberOFItems)*(cartItem.price!!.toInt())} EGP"
+        cartItem.currentPrice=((cartItem.numberOFItems) * (cartItem.price)!!.toInt()).toString()
+        holder.price.text=cartItem.currentPrice + " EGP"
         val url = cartItem.photo
         Glide.with(context).load(url).into(holder.photo)
     }
