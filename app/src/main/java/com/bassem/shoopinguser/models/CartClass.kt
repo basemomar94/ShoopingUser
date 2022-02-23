@@ -9,5 +9,6 @@ data class CartClass(
     val photo: String? = null,
     val id: String? = null,
     val sum: Int? = null,
-    var currentPrice: String? = null
+    var currentPrice: String? = null,
+    val amount: Int? = null
 )

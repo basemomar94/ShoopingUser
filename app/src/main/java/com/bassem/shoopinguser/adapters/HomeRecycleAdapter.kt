@@ -23,6 +23,7 @@ class HomeRecycleAdapter(
         val title = itemview.findViewById<TextView>(R.id.itemTitle)
         val price = itemview.findViewById<TextView>(R.id.itemPrice)
         val favorite = itemview.findViewById<ImageView>(R.id.favoriteItemView)
+        val sold = itemview.findViewById<ImageView>(R.id.soldImg)
 
         init {
 
@@ -60,6 +61,11 @@ class HomeRecycleAdapter(
             holder.favorite.setImageDrawable(unfavorite)
 
         }
+        if (item.amount!! <= 0) {
+            holder.itemView.isClickable = false
+            holder.itemView.alpha = .5F
+            holder.sold.visibility = View.VISIBLE
+        }
         val url = item.photo
         Glide.with(context).load(url).into(holder.image)
     }
@@ -73,9 +79,7 @@ class HomeRecycleAdapter(
         fun viewItem(position: Int)
 
 
-
     }
-
 
 
 }

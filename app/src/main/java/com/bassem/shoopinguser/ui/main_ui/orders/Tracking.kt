@@ -125,10 +125,7 @@ class Tracking : Fragment(R.layout.tracking_fragment), OrderedItemsAdapter.order
                                             binding!!.trackLayout.visibility = View.VISIBLE
                                             binding!!.loadingSpinner3.visibility = View.GONE
                                         }
-                                        /* for (count in (countList as List<String>)) {
-                                             orderedList.add(OrderedItem(count = count))
 
-                                         } */
                                         orderedAdapter.notifyDataSetChanged()
 
 

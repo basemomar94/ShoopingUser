@@ -18,7 +18,6 @@ import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
@@ -123,11 +122,12 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     override fun add(position: Int) {
         val itemCart = cartListList!![position]
-        if (itemCart.numberOFItems < 10) {
+        if (itemCart.numberOFItems < itemCart.amount!!) {
             itemCart.numberOFItems++
-            itemCart.currentPrice = ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
+            itemCart.currentPrice =
+                ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
             val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
-            binding!!.totalCart.text= "$sum EGP"
+            binding!!.totalCart.text = "$sum EGP"
             cartAdapter!!.notifyItemChanged(position)
 
         }
@@ -137,9 +137,10 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val itemCart = cartListList!![position]
         if (itemCart.numberOFItems > 1) {
             itemCart.numberOFItems--
-            itemCart.currentPrice = ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
+            itemCart.currentPrice =
+                ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
             val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
-            binding!!.totalCart.text= "$sum EGP"
+            binding!!.totalCart.text = "$sum EGP"
             cartAdapter!!.notifyItemChanged(position)
 
 
