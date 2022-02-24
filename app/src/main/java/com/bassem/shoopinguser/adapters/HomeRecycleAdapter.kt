@@ -23,6 +23,8 @@ class HomeRecycleAdapter(
         val title = itemview.findViewById<TextView>(R.id.itemTitle)
         val price = itemview.findViewById<TextView>(R.id.itemPrice)
         val favorite = itemview.findViewById<ImageView>(R.id.favoriteItemView)
+        val cart = itemview.findViewById<ImageView>(R.id.cartItemView)
+
         val sold = itemview.findViewById<ImageView>(R.id.soldImg)
 
         init {
@@ -36,6 +38,11 @@ class HomeRecycleAdapter(
                 val position = adapterPosition
 
                 expandListner.viewItem(position)
+            }
+            cart.setOnClickListener {
+                val position = adapterPosition
+                expandListner.addCart(position)
+
             }
 
         }
@@ -77,6 +84,7 @@ class HomeRecycleAdapter(
     interface expandInterface {
         fun makeFavorite(postion: Int)
         fun viewItem(position: Int)
+        fun addCart(position: Int)
 
 
     }

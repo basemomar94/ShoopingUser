@@ -124,6 +124,12 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         println(position)
     }
 
+    override fun addCart(position: Int) {
+        val id = itemsList[position].id
+        addtoCart(id!!)
+
+    }
+
     fun getItemsFromFirebase() {
         db = FirebaseFirestore.getInstance()
         db.collection("items").addSnapshotListener { value, error ->
@@ -206,6 +212,14 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
             .addOnCompleteListener {
 
 
+            }
+
+    }
+
+    fun addtoCart(id: String) {
+        db = FirebaseFirestore.getInstance()
+        db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
+            .addOnCompleteListener {
             }
 
     }

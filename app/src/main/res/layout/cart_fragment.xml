@@ -3,91 +3,138 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ui.main_ui.cart.CartListClass">
 
-    <ProgressBar
-        android:id="@+id/loadingSpinner2"
-        style="?android:attr/progressBarStyle"
+    <RelativeLayout
+        android:id="@+id/cartFullLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|center_vertical"
-        android:indeterminateTint="@color/orange" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/cartFullLayout"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/cartscroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            tools:visibility="visible">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="300dp"
+            android:fillViewport="true">
 
-            <androidx.core.widget.NestedScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="false"
-                android:layout_marginBottom="52dp"
-                android:fadingEdge="none"
-                android:scrollbarAlwaysDrawHorizontalTrack="false">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <ProgressBar
+                    android:id="@+id/loadingSpinner2"
+                    style="?android:attr/progressBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center|center_vertical"
+                    android:indeterminateTint="@color/orange" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/cartRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp">
+
+                </androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.cardview.widget.CardView
+            app:cardPreventCornerOverlap="false"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="4dp">
+
+            <RelativeLayout
+                android:background="@drawable/cardbackground"
+
+                android:id="@+id/sumlayout"
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+
+                <LinearLayout
+                    android:id="@+id/summarylayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
                     android:orientation="vertical"
                     android:visibility="visible">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/cartRv"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
+
+                        <CheckBox
+                            android:id="@+id/checkBox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginRight="8dp"
+                            android:text="I have a promo code" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/promoLayout"
+                            android:layout_width="203dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:visibility="gone"
+                            app:boxBackgroundColor="@color/white"
+                            tools:visibility="visible">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTextTextPersonName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Enter your promo code"
+                                android:inputType="textPersonName"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginRight="16dp">
-
-                    </androidx.recyclerview.widget.RecyclerView>
-
-                    <CheckBox
-                        android:id="@+id/checkBox"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="4dp"
-                        android:text="I have a promo code" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/promoLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginBottom="8dp"
-                        android:visibility="gone"
-                        app:boxBackgroundColor="@color/white">
+                        android:layout_marginBottom="4dp"
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/editTextTextPersonName"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Enter your promo code"
-                            android:inputType="textPersonName" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_weight=".5"
+                            android:text="Copon Discount"
+                            android:textColor="@color/gray" />
 
-                    <TextView
-                        android:id="@+id/textView9"
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0 EGP"
+                            android:textColor="@color/black" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/divider3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="16dp"
-                        android:text="Order Details (3 items)"
-                        android:textColor="@color/black"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="?android:attr/listDivider" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -126,29 +173,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight=".5"
-                            android:text="Copon Discount"
-                            android:textColor="@color/gray" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="0 EGP"
-                            android:textColor="@color/black" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginBottom="4dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".5"
                             android:text="Delivery Fees"
                             android:textColor="@color/gray" />
 
@@ -160,15 +184,15 @@
                             android:textColor="@color/black" />
                     </LinearLayout>
 
-                    <View
-                        android:id="@+id/divider3"
+                    <TextView
+                        android:id="@+id/textView9"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginBottom="4dp"
-                        android:background="?android:attr/listDivider" />
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:text="Order Details (3 items)"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -198,28 +222,27 @@
                     </LinearLayout>
 
                 </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
 
-            <Button
-                android:id="@+id/checkOut"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_alignParentTop="false"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/expan"
-                android:text="Check Out" />
+                <Button
+                    android:id="@+id/checkOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/expan"
+                    android:text="Order Now" />
 
-            <ProgressBar
-                android:id="@+id/progressBar3"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:indeterminateTint="@color/orange"
-                android:visibility="gone" />
+                <ProgressBar
+                    android:id="@+id/progressBar3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:indeterminateTint="@color/orange"
+                    android:visibility="gone" />
 
-        </RelativeLayout>
-    </LinearLayout>
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/emptyLayout"

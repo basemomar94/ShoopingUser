@@ -18,6 +18,23 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_margin="8dp"
+                app:cardBackgroundColor="@color/lightgray"
+                app:cardCornerRadius="50dp">
+
+                <ImageView
+                    android:id="@+id/cartItemView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|right"
+                    android:layout_margin="4dp"
+                    app:srcCompat="@drawable/ic_baseline_add_shopping_cart_24" />
+            </androidx.cardview.widget.CardView>
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
