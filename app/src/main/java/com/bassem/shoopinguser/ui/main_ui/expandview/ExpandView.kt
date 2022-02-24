@@ -101,18 +101,25 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
 
     fun gettingData() {
         db = FirebaseFirestore.getInstance()
-        db.collection("items").document(documentID).addSnapshotListener { value, error ->
-            if (error != null) {
-                println(error.message)
-            } else {
+        db.collection("items").document(documentID).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                val imageUrl = it.result!!.getString("photo")
+                val title = it.result!!.getString("title")
+                val price = it.result!!.getString("price")
+                itemID = it.result!!.getString("id")!!
+                val amount = it.result!!.getDouble("amount")
+                if (amount!! > 0) {
+                    itemAvaliable()
 
-                val imageUrl = value!!.getString("photo")
-                val title = value.getString("title")
-                val price = value.getString("price")
-                itemID = value.getString("id")!!
+                } else {
+                    itemUnavialable()
+                }
                 Glide.with(context!!).load(imageUrl).into(binding!!.itemView)
                 binding!!.itemTitleview.text = title
-                binding!!.itemPriceview.text = price + " EGP"
+                binding!!.itemPriceview.text = "$price EGP"
+            } else {
+
+
             }
         }
     }
@@ -152,6 +159,20 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
 
             }
 
+    }
+
+    fun itemAvaliable() {
+        binding!!.progressBar5.visibility = View.GONE
+        binding!!.expandLayout.visibility = View.VISIBLE
+    }
+
+    fun itemUnavialable() {
+        binding!!.progressBar5.visibility = View.GONE
+        binding!!.expandLayout.visibility = View.VISIBLE
+        binding!!.soldView.visibility = View.VISIBLE
+        binding!!.expandLayout.alpha = .5F
+        binding!!.cartExpand.isClickable = false
+        binding!!.favExpand.isClickable = false
     }
 
 

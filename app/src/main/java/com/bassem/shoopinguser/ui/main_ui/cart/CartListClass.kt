@@ -17,6 +17,7 @@ import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -130,6 +131,12 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             binding!!.totalCart.text = "$sum EGP"
             cartAdapter!!.notifyItemChanged(position)
 
+        } else {
+            Snackbar.make(
+                requireView(),
+                "Sorry we only have ${itemCart.numberOFItems} of ${itemCart.title}",
+                Snackbar.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -254,9 +261,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         cartListList!!.forEachIndexed { index, cartClass ->
             val count = cartListList!![index].numberOFItems.toString()
             println(count)
-            countList!!.add(count)
+            countList.add(count)
         }
-        orderHashMap["count"] = countList!!
+        orderHashMap["count"] = countList
         orderHashMap["items"] = cartListIds as List<String>
         orderHashMap["cost"] = binding!!.totalCart.text
         orderHashMap["status"] = "pending"
@@ -313,6 +320,10 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         track!!.setOnClickListener {
             findNavController().navigate(R.id.action_cartListClass_to_ordersList)
             dialog.dismiss()
+
+        }
+        dialog.setOnDismissListener {
+            findNavController().navigate(R.id.action_cartListClass_to_Home)
 
         }
 
