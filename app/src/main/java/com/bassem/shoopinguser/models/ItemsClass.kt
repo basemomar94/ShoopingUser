@@ -8,3 +8,4 @@ data class ItemsClass(
     val amount: Int? = null,
     val id: String? = null
 )
+

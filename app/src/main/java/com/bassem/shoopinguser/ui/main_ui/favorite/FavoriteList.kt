@@ -117,43 +117,34 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
             if (it.exception != null) {
                 println(it.exception!!.message)
             } else {
-                Thread(kotlinx.coroutines.Runnable {
+                favListIds = it.result!!.get("fav")
 
 
-                    favListIds = it.result!!.get("fav")
-                    if (favListIds != null) {
-                        if ((favListIds as List<*>).isEmpty()) {
-                            activity!!.runOnUiThread {
-                                hideEmptyFav()
-
-                            }
-                        } else {
-                            var i = 0
-                            for (item in favListIds as List<String>) {
-                                db.collection("items").document(item).get().addOnSuccessListener {
-                                    val item = it.toObject(FavoriteClass::class.java)
-                                    if (item != null) {
-                                        favoriteList.add(item)
-                                    }
-                                    activity!!.runOnUiThread {
-                                        favAdapter.notifyDataSetChanged()
-                                        i++
-                                        if (i == (favListIds as List<*>).size) {
-                                            showFav()
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
+                if (favListIds != null) {
+                    if ((favListIds as List<*>).isEmpty()) {
                         activity!!.runOnUiThread {
                             hideEmptyFav()
 
                         }
+                    } else {
+                        var i = 0
+                        for (item in favListIds as List<String>) {
+                            db.collection("items").document(item).get().addOnSuccessListener {
+                                val item = it.toObject(FavoriteClass::class.java)
+                                if (item != null) {
+                                    favoriteList.add(item)
+                                }
+                                i++
+                                if (i == (favListIds as List<*>).size) {
+                                    showFav()
+                                }
+                            }
+                        }
                     }
+                } else {
+                    hideEmptyFav()
 
-
-                }).start()
+                }
 
 
             }

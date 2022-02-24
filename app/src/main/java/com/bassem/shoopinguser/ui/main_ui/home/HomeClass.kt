@@ -58,7 +58,6 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         itemsList = arrayListOf()
         recycleSetup()
         getCartCounter()
-        getFavCounter()
 
         getItemsFromFirebase()
 
@@ -136,26 +135,23 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
             if (error != null) {
                 println(error.message)
             } else {
-                Thread(Runnable {
-                    var i = 0
-                    for (dc: DocumentChange in value!!.documentChanges) {
-                        if (dc.type == DocumentChange.Type.ADDED) {
-                            itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                            println("LOOOOOP")
-                        }
-                        activity!!.runOnUiThread {
-                            i++
-                            adapter.notifyDataSetChanged()
-                            if (i == itemsList.size) {
-                                binding.homeRV.visibility = View.VISIBLE
-                                binding.shimmerLayout.visibility = View.GONE
-
-                            }
-                        }
+                var i = 0
+                for (dc: DocumentChange in value!!.documentChanges) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        itemsList.add(dc.document.toObject(ItemsClass::class.java))
+                        println("LOOOOOP")
+                    }
+                    i++
+                    adapter.notifyDataSetChanged()
+                    if (i == itemsList.size) {
+                        binding.homeRV.visibility = View.VISIBLE
+                        binding.shimmerLayout.visibility = View.GONE
+                        getFavCounter()
 
                     }
 
-                }).start()
+
+                }
 
             }
         }
@@ -182,18 +178,29 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
-                val favList = value.get("fav")
+                val favList = value.get("fav") as List<String>
                 if (favList != null) {
-                    val favtCount = (favList as List<String>).size
+                    val favCount = (favList).size
+                    itemsList.filter { it.id !in favList.map { item -> item
+
+                    } }
+
+
+
+
+
+
+
+
                     bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
                         badgeTextColor = Color.DKGRAY
-                        if (favtCount == 0) {
+                        if (favCount == 0) {
                             backgroundColor = Color.parseColor("#FFFFFF")
                             clearNumber()
                             clearColorFilter()
 
                         } else {
-                            number = favtCount
+                            number = favCount
                             backgroundColor = Color.parseColor("#FFA56D")
 
 
@@ -223,6 +230,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
             }
 
     }
+
 
 
 }
