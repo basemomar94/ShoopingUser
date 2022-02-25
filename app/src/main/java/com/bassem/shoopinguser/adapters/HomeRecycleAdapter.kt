@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.models.ItemsClass
 import com.bumptech.glide.Glide
 
 class HomeRecycleAdapter(
-    val itemsList: MutableList<ItemsClass>,
+    var itemsList: MutableList<ItemsClass>,
     val context: Context,
     val expandListner: expandInterface,
 ) : RecyclerView.Adapter<HomeRecycleAdapter.ViewHolder>() {
@@ -24,24 +25,27 @@ class HomeRecycleAdapter(
         val price = itemview.findViewById<TextView>(R.id.itemPrice)
         val favorite = itemview.findViewById<ImageView>(R.id.favoriteItemView)
         val cart = itemview.findViewById<ImageView>(R.id.cartItemView)
+        val favCard = itemview.findViewById<CardView>(R.id.favCart)
+        val cartCard = itemview.findViewById<CardView>(R.id.cartCard)
 
         val sold = itemview.findViewById<ImageView>(R.id.soldImg)
 
         init {
 
-            favorite.setOnClickListener {
+            favCard.setOnClickListener {
                 val positionFavorite = adapterPosition
-
-                expandListner.makeFavorite(positionFavorite)
+                val item = itemsList[positionFavorite].id
+                expandListner.makeFavorite(item!!, positionFavorite,true)
             }
             itemview.setOnClickListener {
                 val position = adapterPosition
-
-                expandListner.viewItem(position)
+                val item = itemsList[position].id
+                expandListner.viewItem(item!!)
             }
-            cart.setOnClickListener {
+            cartCard.setOnClickListener {
                 val position = adapterPosition
-                expandListner.addCart(position)
+                val item = itemsList[position].id
+                expandListner.addCart(item!!, position)
 
             }
 
@@ -81,10 +85,15 @@ class HomeRecycleAdapter(
         return itemsList.size
     }
 
+    fun filter(filterList: MutableList<ItemsClass>) {
+        itemsList = filterList
+        notifyDataSetChanged()
+    }
+
     interface expandInterface {
-        fun makeFavorite(postion: Int)
-        fun viewItem(position: Int)
-        fun addCart(position: Int)
+        fun makeFavorite(item: String, position: Int, fav: Boolean)
+        fun viewItem(item: String)
+        fun addCart(item: String, position: Int)
 
 
     }

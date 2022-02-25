@@ -19,8 +19,9 @@
             android:layout_height="match_parent">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/cartCard"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_gravity="left"
                 android:layout_margin="8dp"
                 app:cardBackgroundColor="@color/lightgray"
@@ -30,7 +31,7 @@
                     android:id="@+id/cartItemView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|right"
+                    android:layout_gravity="center"
                     android:layout_margin="4dp"
                     app:srcCompat="@drawable/ic_baseline_add_shopping_cart_24" />
             </androidx.cardview.widget.CardView>
@@ -69,8 +70,9 @@
                 app:srcCompat="@drawable/sold" />
 
             <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/favCart"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
                 android:layout_gravity="right"
                 android:layout_margin="8dp"
                 app:cardBackgroundColor="@color/lightgray"
@@ -80,7 +82,7 @@
                     android:id="@+id/favoriteItemView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center|right"
+                    android:layout_gravity="center"
                     android:layout_margin="4dp"
                     app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
             </androidx.cardview.widget.CardView>

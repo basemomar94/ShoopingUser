@@ -310,6 +310,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val dialog = BottomSheetDialog(context!!)
         val v = layoutInflater.inflate(R.layout.confirm_bottom_sheet, null)
         dialog.setContentView(v)
+        dialog.dismissWithAnimation=true
         val contine = dialog.findViewById<Button>(R.id.continueSheet)
         contine!!.setOnClickListener {
             findNavController().navigate(R.id.action_cartListClass_to_Home)
@@ -323,7 +324,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
         }
         dialog.setOnDismissListener {
-            findNavController().navigate(R.id.action_cartListClass_to_Home)
+            hideEmptycart()
 
         }
 

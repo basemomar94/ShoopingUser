@@ -3,6 +3,7 @@ package com.bassem.shoopinguser.ui.main_ui.home
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -17,7 +18,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
-class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface {
+class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
+    SearchView.OnQueryTextListener {
     lateinit var _binding: HomeFragmentBinding
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView
@@ -38,6 +40,9 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.top_menue, menu)
+        val search = menu.findItem(R.id.app_bar_search)
+        val SearchView = search.actionView as SearchView
+        SearchView.setOnQueryTextListener(this)
     }
 
     override fun onCreateView(
@@ -102,12 +107,9 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     }
 
-    override fun makeFavorite(postion: Int) {
-        val item = itemsList[postion]
-        val id = item.id
-        item.favorite = !item.favorite
-        adapter.notifyItemChanged(postion)
-        addtoFavorite(id!!)
+    override fun makeFavorite(item: String, position: Int, fav: Boolean) {
+        adapter.notifyItemChanged(position)
+        addtoFavorite(item)
     }
 
     fun goToView(documentid: String) {
@@ -117,15 +119,12 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         navController.navigate(R.id.action_homeClass_to_expandView, bundle)
     }
 
-    override fun viewItem(position: Int) {
-        val document = itemsList[position].id
-        goToView(document!!)
-        println(position)
+    override fun viewItem(item: String) {
+        goToView(item)
     }
 
-    override fun addCart(position: Int) {
-        val id = itemsList[position].id
-        addtoCart(id!!)
+    override fun addCart(item: String, position: Int) {
+        addtoCart(item)
 
     }
 
@@ -181,15 +180,12 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                 val favList = value.get("fav") as List<String>
                 if (favList != null) {
                     val favCount = (favList).size
-                    itemsList.filter { it.id !in favList.map { item -> item
+                    itemsList.filter {
+                        it.id !in favList.map { item ->
+                            item
 
-                    } }
-
-
-
-
-
-
+                        }
+                    }
 
 
                     bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
@@ -227,10 +223,31 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
+                adapter.notifyDataSetChanged()
             }
 
     }
 
+    override fun onQueryTextSubmit(p0: String?): Boolean {
+        return false
+    }
+
+    override fun onQueryTextChange(p0: String?): Boolean {
+        filterFun(p0.toString().lowercase())
+        return true
+    }
+
+
+    fun filterFun(title: String) {
+        val filterList: MutableList<ItemsClass> = arrayListOf()
+        itemsList.forEach {
+            if (it.title!!.lowercase().contains(title)) {
+                filterList.add(it)
+            }
+        }
+        adapter.filter(filterList)
+
+    }
 
 
 }

@@ -79,28 +79,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="16dp"
+                            android:layout_marginLeft="4dp"
                             android:layout_marginTop="4dp"
-                            android:layout_marginRight="8dp"
+                            android:layout_marginRight="4dp"
                             android:text="I have a promo code" />
 
-                        <com.google.android.material.textfield.TextInputLayout
+                        <EditText
                             android:id="@+id/promoLayout"
-                            android:layout_width="203dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginLeft="4dp"
                             android:layout_marginTop="4dp"
-                            android:visibility="gone"
-                            app:boxBackgroundColor="@color/white"
-                            tools:visibility="visible">
+                            android:layout_marginRight="4dp"
+                            android:hint="add your copons"
+                            android:inputType="textPersonName" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/editTextTextPersonName"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:hint="Enter your promo code"
-                                android:inputType="textPersonName"
-                                android:textSize="14sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
 
                     <LinearLayout
