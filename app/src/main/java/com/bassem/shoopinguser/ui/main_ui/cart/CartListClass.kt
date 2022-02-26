@@ -15,6 +15,7 @@ import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.CartRecycleAdapter
 import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
+import com.bassem.shoopinguser.models.CouponsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
@@ -41,6 +42,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     var total: Int? = null
     var name: String? = null
     var cartListIds: Any? = null
+    var isCopuon = false
+    val dilveryFees = 10
+    var discount: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,12 +98,21 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
         binding!!.checkBox.setOnClickListener {
             if (binding!!.checkBox.isChecked) {
+                isCopuon = true
                 binding!!.promoLayout.visibility = View.VISIBLE
+                binding!!.apply.visibility = View.VISIBLE
             } else {
                 binding!!.promoLayout.visibility = View.GONE
+                binding!!.apply.visibility = View.GONE
+                isCopuon = false
 
             }
         }
+
+        binding!!.apply.setOnClickListener {
+            getCouponDiscount()
+        }
+
 
     }
 
@@ -128,7 +141,10 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             itemCart.currentPrice =
                 ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
             val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
-            binding!!.totalCart.text = "$sum EGP"
+            binding!!.subtotal.text = "$sum EGP"
+            val discountTotal = sum - discount
+            binding!!.totalCart.text = "${discountTotal + dilveryFees} EGP"
+
             cartAdapter!!.notifyItemChanged(position)
 
         } else {
@@ -147,7 +163,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             itemCart.currentPrice =
                 ((itemCart.numberOFItems) * (itemCart.price!!.toInt())).toString()
             val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
-            binding!!.totalCart.text = "$sum EGP"
+            binding!!.subtotal.text = "$sum EGP"
+            val discountTotal = sum - discount
+            binding!!.totalCart.text = "${discountTotal + dilveryFees} EGP"
             cartAdapter!!.notifyItemChanged(position)
 
 
@@ -175,7 +193,6 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                             for (item in cartListIds as List<String>) {
                                 db.collection("items").document(item).get().addOnSuccessListener {
                                     val item = it.toObject(CartClass::class.java)
-                                    println("$item ==========ee")
                                     if (item != null) {
                                         cartListList!!.add(item)
 
@@ -233,10 +250,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     fun updatePrice() {
         val sum = cartListList!!.sumBy { it.currentPrice!!.toInt() }
         binding!!.subtotal.text = "$sum EGP"
-        val dilveryFees = 0
         total = sum + dilveryFees
         binding!!.totalCart.text = "$total EGP"
-        println("$sum================$total")
     }
 
     fun hideEmptycart() {
@@ -257,6 +272,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val orderHashMap = HashMap<String, Any>()
         var countList: MutableList<String>? = null
         countList = arrayListOf()
+        val promo = binding!!.promoLayout.text.toString().lowercase().trim()
 
         cartListList!!.forEachIndexed { index, cartClass ->
             val count = cartListList!![index].numberOFItems.toString()
@@ -273,6 +289,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         orderHashMap["address"] = adress!!
         orderHashMap["phone"] = phone!!
         orderHashMap["name"] = name!!
+        orderHashMap["promo"] = promo
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID).set(orderHashMap).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -310,7 +327,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val dialog = BottomSheetDialog(context!!)
         val v = layoutInflater.inflate(R.layout.confirm_bottom_sheet, null)
         dialog.setContentView(v)
-        dialog.dismissWithAnimation=true
+        dialog.dismissWithAnimation = true
         val contine = dialog.findViewById<Button>(R.id.continueSheet)
         contine!!.setOnClickListener {
             findNavController().navigate(R.id.action_cartListClass_to_Home)
@@ -347,6 +364,54 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             name = it.getString("name")
 
         }
+    }
+
+    fun getCouponDiscount() {
+        if (binding!!.promoLayout.text.isNotEmpty()) {
+            val coupon = binding!!.promoLayout.text.toString().trim().lowercase()
+            db = FirebaseFirestore.getInstance()
+            db.collection("coupons").whereEqualTo("title", coupon).get().addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val couponsList = it.result!!.toObjects(CouponsClass::class.java)
+                    if (couponsList.isNotEmpty()) {
+                        if (couponsList[0].valid!!) {
+                            lockpromo()
+                            discount = couponsList[0].amount!!
+                            binding!!.discountValue.text = "- $discount EGP"
+                            val currentSub =
+                                binding!!.subtotal.text.toString().substringBefore(" EGP").toInt()
+                            val discountSub = currentSub - discount
+                            binding!!.subtotal.text = "$discountSub EGP"
+                            binding!!.totalCart.text = "${discountSub + dilveryFees} EGP"
+                        }
+                    } else {
+                        binding!!.discountLayout.visibility = View.GONE
+                        discount = 0
+
+                        Toast.makeText(
+                            requireContext(),
+                            "Your promo code isn't valid",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+
+                }
+            }
+
+        }
+
+
+    }
+
+    fun lockpromo() {
+        binding!!.checkBox.isEnabled = false
+        binding!!.discountLayout.visibility = View.VISIBLE
+        binding!!.apply.apply {
+            isEnabled = false
+            alpha = .5F
+        }
+        binding!!.promoLayout.isEnabled = false
     }
 
 

@@ -2,6 +2,7 @@ package com.bassem.shoopinguser.ui.main_ui.home
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         setHasOptionsMenu(true)
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
+        db = FirebaseFirestore.getInstance()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -109,6 +111,8 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     override fun makeFavorite(item: String, position: Int, fav: Boolean) {
         adapter.notifyItemChanged(position)
+        val itemHere = itemsList[position]
+        itemHere.favorite = true
         addtoFavorite(item)
     }
 
@@ -125,11 +129,14 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     override fun addCart(item: String, position: Int) {
         addtoCart(item)
+        val itemHere = itemsList[position]
+        println(itemHere.favorite)
+
 
     }
 
     fun getItemsFromFirebase() {
-        db = FirebaseFirestore.getInstance()
+        //   db = FirebaseFirestore.getInstance()
         db.collection("items").addSnapshotListener { value, error ->
             if (error != null) {
                 println(error.message)
@@ -138,7 +145,6 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                 for (dc: DocumentChange in value!!.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                        println("LOOOOOP")
                     }
                     i++
                     adapter.notifyDataSetChanged()
@@ -146,6 +152,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                         binding.homeRV.visibility = View.VISIBLE
                         binding.shimmerLayout.visibility = View.GONE
                         getFavCounter()
+
 
                     }
 
@@ -158,7 +165,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun getCartCounter() {
-        db = FirebaseFirestore.getInstance()
+        //   db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val cartList = value.get("cart")
@@ -174,17 +181,22 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun getFavCounter() {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).addSnapshotListener { value, error ->
             if (value != null) {
                 val favList = value.get("fav") as List<String>
                 if (favList != null) {
+
                     val favCount = (favList).size
-                    itemsList.filter {
-                        it.id !in favList.map { item ->
-                            item
+                    itemsList.forEach { item ->
+                        favList.forEach { fav ->
+                            if (item.id == fav) {
+                                item.favorite = true
+                                println(item.title)
+                                adapter.notifyDataSetChanged()
+                            }
 
                         }
+
                     }
 
 
@@ -210,7 +222,6 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun addtoFavorite(id: String) {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
 
@@ -220,7 +231,6 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun addtoCart(id: String) {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
                 adapter.notifyDataSetChanged()
