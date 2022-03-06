@@ -13,7 +13,7 @@ import com.bassem.shoopinguser.databinding.AccountFragmentBinding
 import com.bassem.shoopinguser.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 
-class AccountClass : Fragment(R.layout.account_fragment) {
+class AccountFragment : Fragment(R.layout.account_fragment) {
     var _binding: AccountFragmentBinding? = null
     val binding get() = _binding
     lateinit var auth: FirebaseAuth
@@ -35,7 +35,7 @@ class AccountClass : Fragment(R.layout.account_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = activity!!.findViewById(R.id.cartFloating)
+        fabCart = requireActivity().findViewById(R.id.cartFloating)
         fabCart.visibility = View.GONE
         //listners
         binding!!.myordersLayout.setOnClickListener {
@@ -56,8 +56,8 @@ class AccountClass : Fragment(R.layout.account_fragment) {
         auth = FirebaseAuth.getInstance()
         auth.signOut()
         val intent = Intent(activity, LoginActivity::class.java)
-        activity!!.startActivity(intent)
-        activity!!.finish()
+        requireActivity()!!.startActivity(intent)
+        requireActivity()!!.finish()
     }
 
     fun loading() {

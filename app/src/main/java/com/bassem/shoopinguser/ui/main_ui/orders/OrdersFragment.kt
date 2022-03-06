@@ -24,7 +24,7 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
-class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
+class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
     lateinit var recyclerView: RecyclerView
     lateinit var orderAdapter: OrdersRecycleAdapter
     lateinit var orderList: MutableList<OrderClass>
@@ -53,34 +53,29 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
         return binding!!.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        bottomNavigationView.visibility = View.VISIBLE
-        orderList.clear()
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        orderList.clear()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = activity!!.findViewById(R.id.cartFloating)
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        fabCart = requireActivity().findViewById(R.id.cartFloating)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
 
 
         recycleSetup()
-        getOrders()
+        if (orderList.isEmpty()) {
+            getOrders()
+
+        } else {
+            orderList.clear()
+            getOrders()
+        }
 
 
     }
 
     fun recycleSetup() {
         orderAdapter = OrdersRecycleAdapter(orderList, this)
-        recyclerView = view!!.findViewById(R.id.ordersRV)
+        recyclerView = requireView().findViewById(R.id.ordersRV)
         recyclerView.apply {
             adapter = orderAdapter
             layoutManager = LinearLayoutManager(context)
@@ -94,7 +89,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
         val order = orderList[position].order_id
         val bundle = Bundle()
         bundle.putString("order", order)
-        val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+        val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         navController.navigate(R.id.action_ordersList_to_tracking, bundle)
 
     }
@@ -110,7 +105,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
                         var i = 0
                         val orderCount = it.result!!.documentChanges.size
                         if (orderCount == 0) {
-                            activity!!.runOnUiThread {
+                            requireActivity().runOnUiThread {
                                 hideOrders()
 
                             }
@@ -120,7 +115,7 @@ class OrdersList : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clic
                                 if (dc.type == DocumentChange.Type.ADDED) {
 
                                     orderList.add(dc.document.toObject(OrderClass::class.java))
-                                    activity!!.runOnUiThread {
+                                    requireActivity().runOnUiThread {
                                         i++
 
                                         orderAdapter.notifyDataSetChanged()

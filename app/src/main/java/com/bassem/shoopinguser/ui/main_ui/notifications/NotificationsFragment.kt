@@ -16,7 +16,7 @@ import com.bassem.shoopinguser.models.NotificationsClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_welcome.*
 
-class NotificationsList : Fragment(R.layout.notification_fragment) {
+class NotificationsFragment : Fragment(R.layout.notification_fragment) {
     var _binding: NotificationFragmentBinding? = null
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView

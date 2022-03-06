@@ -1,30 +1,24 @@
 package com.bassem.shoopinguser.ui.main_ui.expandview
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
-import com.bassem.shoopinguser.databinding.AccountFragmentBinding.inflate
 import com.bassem.shoopinguser.databinding.ExpandFragmentBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ExpandView : Fragment(R.layout.expand_fragment) {
+class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
     var _binding: ExpandFragmentBinding? = null
     val binding get() = _binding
     lateinit var fabCounterFab: CounterFab
@@ -61,9 +55,9 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCounterFab = activity!!.findViewById(R.id.cartFloating)
+        fabCounterFab = requireActivity().findViewById(R.id.cartFloating)
         fabCounterFab.visibility = View.GONE
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
 
         gettingData()
@@ -107,6 +101,7 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
                 val title = it.result!!.getString("title")
                 val price = it.result!!.getString("price")
                 itemID = it.result!!.getString("id")!!
+                val details = it.result!!.getString("details")
                 val amount = it.result!!.getDouble("amount")
                 if (amount!! > 0) {
                     itemAvaliable()
@@ -114,9 +109,10 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
                 } else {
                     itemUnavialable()
                 }
-                Glide.with(context!!).load(imageUrl).into(binding!!.itemView)
+                Glide.with(requireContext()).load(imageUrl).into(binding!!.itemView)
                 binding!!.itemTitleview.text = title
                 binding!!.itemPriceview.text = "$price EGP"
+                binding!!.detailsExpand.text = details
             } else {
 
 
@@ -134,7 +130,7 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
     }
 
     fun showButtonSheet() {
-        val dialog = BottomSheetDialog(context!!)
+        val dialog = BottomSheetDialog(requireContext())
         val v = layoutInflater.inflate(R.layout.order_bottom_sheet, null)
         dialog.setContentView(v)
         val continine = dialog.findViewById<Button>(R.id.continueDialog)
@@ -154,7 +150,8 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
-                val favorite = AppCompatResources.getDrawable(context!!, R.drawable.favoritered)
+                val favorite =
+                    AppCompatResources.getDrawable(requireContext(), R.drawable.favoritered)
                 binding!!.favImg.setImageDrawable(favorite)
 
             }
@@ -174,6 +171,7 @@ class ExpandView : Fragment(R.layout.expand_fragment) {
         binding!!.cartExpand.isClickable = false
         binding!!.favExpand.isClickable = false
     }
+
 
 
 }

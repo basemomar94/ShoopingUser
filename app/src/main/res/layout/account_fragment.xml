@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.main_ui.profile.AccountClass">
+    tools:context=".ui.main_ui.profile.AccountFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"

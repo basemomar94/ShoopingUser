@@ -8,25 +8,102 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
+import com.bassem.shoopinguser.adapters.HomeSliderAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
+import com.smarteist.autoimageslider.SliderView
 
 class HomeContainer : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    lateinit var db: FirebaseFirestore
+    lateinit var auth: FirebaseAuth
+    lateinit var userID: String
+    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var fabCart: CounterFab
+    lateinit var homeslider: SliderView
+    lateinit var sliderHomeAdapter: HomeSliderAdapter
+    var imageList = listOf<Int>(
+        R.drawable.welcome1,
+        R.drawable.welcome2,
+        R.drawable.welcome3,
+        R.drawable.welcome4
+    )
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar!!.title=""
         setContentView(R.layout.activity_home_container)
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomAppBar)
+        db = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        userID = auth.currentUser!!.uid
+        fabCart = findViewById(R.id.cartFloating)
+        supportActionBar!!.title = ""
+        bottomNavigationView = findViewById(R.id.bottomAppBar)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         bottomNavigationView.setupWithNavController(navController)
-        bottomNavigationView.getOrCreateBadge(R.id.Notifications).apply {
-            badgeTextColor=Color.DKGRAY
-            backgroundColor=Color.parseColor("#FFA56D")
-            number=5
+
+
+
+
+        getFavCounter()
+        getCartCounter()
+        sliderSetup()
+
+    }
+
+    fun getFavCounter() {
+        db.collection("users").document(userID).addSnapshotListener { value, error ->
+            if (value != null) {
+                val favList = value.get("fav") as MutableList<String>
+                if (favList != null) {
+                    val favCount = (favList).size
+                    println(favCount)
+                    bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
+                        badgeTextColor = Color.DKGRAY
+                        if (favCount == 0) {
+                            backgroundColor = Color.parseColor("#FFFFFF")
+                            clearNumber()
+                            clearColorFilter()
+
+                        } else {
+                            number = favCount
+                            backgroundColor = Color.parseColor("#FFA56D")
+
+
+                        }
+                    }
+                }
+
+            }
         }
 
+    }
+
+    fun getCartCounter() {
+        db.collection("users").document(userID).addSnapshotListener { value, error ->
+            if (value != null) {
+                val cartList = value.get("cart")
+                if (cartList != null) {
+                    val cartCount = (cartList as List<String>).size
+                    if (cartCount != null) {
+                        fabCart.count = cartCount
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun sliderSetup() {
+        homeslider = findViewById(R.id.homeSlider)
+        sliderHomeAdapter = HomeSliderAdapter(imageList)
+        homeslider.apply {
+            setIndicatorAnimation(IndicatorAnimationType.WORM)
+            setSliderAdapter(sliderHomeAdapter)
+            startAutoCycle()
+        }
 
 
     }

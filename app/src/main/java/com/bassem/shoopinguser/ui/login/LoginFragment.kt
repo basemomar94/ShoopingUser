@@ -1,6 +1,5 @@
 package com.bassem.shoopinguser.ui.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -44,7 +43,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     fun goToSignup() {
         val transcation = requireActivity().supportFragmentManager.beginTransaction()
-        transcation.replace(R.id.fragmentContainerLogin, SignupClass())
+        transcation.replace(R.id.fragmentContainerLogin, SignupFragment())
         transcation.commit()
     }
 
@@ -57,8 +56,8 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
     fun signIn() {
         val mail = binding!!.mailSignin.text!!.trim().toString()
         val password = binding!!.passSigin.text!!.trim().toString()
-        SignupClass().errorEmpty(mail, binding!!.mailSignLayout)
-        SignupClass().errorEmpty(password, binding!!.passSignLayout)
+        SignupFragment().errorEmpty(mail, binding!!.mailSignLayout)
+        SignupFragment().errorEmpty(password, binding!!.passSignLayout)
         if (mail.isNotEmpty() && password.isNotEmpty()) {
             loading()
             auth = FirebaseAuth.getInstance()

@@ -1,8 +1,6 @@
 package com.bassem.shoopinguser.ui.main_ui.home
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -15,11 +13,13 @@ import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.databinding.HomeFragmentBinding
 import com.bassem.shoopinguser.models.ItemsClass
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.smarteist.autoimageslider.SliderView
 
-class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
+class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
     SearchView.OnQueryTextListener {
     lateinit var _binding: HomeFragmentBinding
     val binding get() = _binding
@@ -31,6 +31,10 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     lateinit var db: FirebaseFirestore
     lateinit var userID: String
     lateinit var auth: FirebaseAuth
+    var favList: MutableList<String> = arrayListOf()
+    var cartList: MutableList<String> = arrayListOf()
+    lateinit var appbar: AppBarLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +42,23 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
         db = FirebaseFirestore.getInstance()
+
+
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        appbar.visibility = View.GONE
+    }
+
+    override fun onPause() {
+        super.onPause()
+        appbar.visibility = View.GONE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appbar.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -60,13 +81,18 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = activity!!.findViewById(R.id.cartFloating)
+        fabCart = requireActivity().findViewById(R.id.cartFloating)
         fabCart.visibility = View.VISIBLE
+        appbar = requireActivity().findViewById(R.id.appbar)
         itemsList = arrayListOf()
         recycleSetup()
-        getCartCounter()
+        if (itemsList.isEmpty()) {
+            getItemsFromFirebase()
 
-        getItemsFromFirebase()
+        } else {
+            itemsList.clear()
+            getItemsFromFirebase()
+        }
 
         fabCart.setOnClickListener {
             findNavController().navigate(R.id.action_homeClass_to_cartListClass)
@@ -76,11 +102,11 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun recycleSetup() {
-        recyclerView = view!!.findViewById(R.id.homeRV)
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        recyclerView = requireView().findViewById(R.id.homeRV)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.VISIBLE
 
-        adapter = HomeRecycleAdapter(itemsList, context!!, this)
+        adapter = HomeRecycleAdapter(itemsList, requireContext(), this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.setHasFixedSize(true)
@@ -109,17 +135,23 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
 
     }
 
-    override fun makeFavorite(item: String, position: Int, fav: Boolean) {
+    override fun makeFavorite(id: String, position: Int, fav: Boolean, item: ItemsClass) {
         adapter.notifyItemChanged(position)
         val itemHere = itemsList[position]
-        itemHere.favorite = true
-        addtoFavorite(item)
+        if (!itemHere.favorite) {
+            itemHere.favorite = true
+        } else {
+            itemHere.favorite = false
+            removeFromFav(position, id)
+
+        }
+        addtoFavorite(id)
     }
 
     fun goToView(documentid: String) {
         val bundle = Bundle()
         bundle.putString("document", documentid)
-        val navController = Navigation.findNavController(activity!!, R.id.nav_host_fragment)
+        val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         navController.navigate(R.id.action_homeClass_to_expandView, bundle)
     }
 
@@ -127,16 +159,22 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
         goToView(item)
     }
 
-    override fun addCart(item: String, position: Int) {
-        addtoCart(item)
+    override fun addCart(id: String, position: Int, item: ItemsClass) {
+        addtoCart(id)
         val itemHere = itemsList[position]
-        println(itemHere.favorite)
+        if (!itemHere.cart) {
+            itemHere.cart = true
+        } else {
+            itemHere.cart = false
+            removeFromCart(position, id)
+        }
+        adapter.notifyItemChanged(position)
 
 
     }
 
+
     fun getItemsFromFirebase() {
-        //   db = FirebaseFirestore.getInstance()
         db.collection("items").addSnapshotListener { value, error ->
             if (error != null) {
                 println(error.message)
@@ -152,6 +190,7 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
                         binding.homeRV.visibility = View.VISIBLE
                         binding.shimmerLayout.visibility = View.GONE
                         getFavCounter()
+                        getCartCounter()
 
 
                     }
@@ -165,14 +204,15 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun getCartCounter() {
-        //   db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userID).addSnapshotListener { value, error ->
-            if (value != null) {
-                val cartList = value.get("cart")
-                if (cartList != null) {
-                    val cartCount = (cartList as List<String>).size
-                    if (cartCount != null) {
-                        fabCart.count = cartCount
+        db.collection("users").document(userID).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                cartList = it.result!!.get("cart") as MutableList<String>
+                itemsList.forEach { item ->
+                    cartList.forEach { cart ->
+                        if (item.id == cart) {
+                            item.cart = true
+                            adapter.notifyDataSetChanged()
+                        }
                     }
                 }
 
@@ -181,39 +221,18 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     }
 
     fun getFavCounter() {
-        db.collection("users").document(userID).addSnapshotListener { value, error ->
-            if (value != null) {
-                val favList = value.get("fav") as List<String>
-                if (favList != null) {
-
-                    val favCount = (favList).size
-                    itemsList.forEach { item ->
-                        favList.forEach { fav ->
-                            if (item.id == fav) {
-                                item.favorite = true
-                                println(item.title)
-                                adapter.notifyDataSetChanged()
-                            }
-
+        db.collection("users").document(userID).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                favList = it.result!!.get("fav") as MutableList<String>
+                itemsList.forEach { item ->
+                    favList.forEach { fav ->
+                        if (item.id == fav) {
+                            item.favorite = true
+                            adapter.notifyDataSetChanged()
                         }
 
                     }
 
-
-                    bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
-                        badgeTextColor = Color.DKGRAY
-                        if (favCount == 0) {
-                            backgroundColor = Color.parseColor("#FFFFFF")
-                            clearNumber()
-                            clearColorFilter()
-
-                        } else {
-                            number = favCount
-                            backgroundColor = Color.parseColor("#FFA56D")
-
-
-                        }
-                    }
                 }
 
             }
@@ -233,8 +252,8 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
     fun addtoCart(id: String) {
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
-                adapter.notifyDataSetChanged()
             }
+
 
     }
 
@@ -256,6 +275,26 @@ class HomeClass : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInt
             }
         }
         adapter.filter(filterList)
+
+    }
+
+    fun removeFromFav(position: Int, item: String) {
+        favList.remove(item)
+        adapter.notifyItemChanged(position)
+        db.collection("users").document(userID).update("fav", favList).addOnCompleteListener {
+            if (it.isSuccessful) {
+            }
+        }
+    }
+
+    private fun removeFromCart(position: Int, item: String) {
+        cartList.remove(item)
+        adapter.notifyItemChanged(position)
+        db.collection("users").document(userID).update("cart", cartList)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                }
+            }
 
     }
 

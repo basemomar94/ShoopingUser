@@ -13,9 +13,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 
-class SignupClass : Fragment(R.layout.signup_fragment) {
+class SignupFragment : Fragment(R.layout.signup_fragment) {
     var _binding: SignupFragmentBinding? = null
     val binding get() = _binding
     lateinit var auth: FirebaseAuth
@@ -27,6 +29,17 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
     lateinit var adress: String
     lateinit var phone: String
     lateinit var userId: String
+    var token: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+        getToken()
+
+
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -98,11 +111,10 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
     fun firebaseAuth() {
 
         loading()
-        auth = FirebaseAuth.getInstance()
         auth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener {
             if (it.isSuccessful) {
                 userId = auth.uid!!
-                addtoDB()
+                addtoDB(getSignupInfo(userId))
             } else {
                 normal()
             }
@@ -115,8 +127,8 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
 
     fun gotoHome() {
         val intent = Intent(activity, HomeContainer::class.java)
-        activity!!.startActivity(intent)
-        activity!!.finish()
+        requireActivity().startActivity(intent)
+        requireActivity().finish()
     }
 
     fun loading() {
@@ -129,16 +141,27 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
         binding!!.progressBar.visibility = View.GONE
     }
 
-    fun addtoDB() {
-        val user = HashMap<Any, String>()
+    fun getSignupInfo(id: String): HashMap<String, Any> {
+        val list:List<String> = arrayListOf()
+        val user = HashMap<String, Any>()
         user["name"] = name
-        user["id"] = userId
+        user["id"] = id
         user["mail"] = mail
         user["address"] = adress
         user["phone"] = phone
         user["password"] = password
-        db = FirebaseFirestore.getInstance()
-        db.collection("users").document(userId).set(user).addOnCompleteListener {
+        user["fav"]=list
+        user["cart"]=list
+
+        auth.currentUser!!.getIdToken(true).addOnCompleteListener {
+            token = it.result!!.token
+        }
+        user["token"] = token!!
+        return user
+    }
+
+    fun addtoDB(data: HashMap<String, Any>) {
+        db.collection("users").document(userId).set(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 gotoHome()
 
@@ -153,6 +176,14 @@ class SignupClass : Fragment(R.layout.signup_fragment) {
                     .show()
             }
 
+        }
+    }
+
+    fun getToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) {
+                token = it.result
+            }
         }
     }
 

@@ -26,7 +26,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.HashMap
 
-class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
+class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
     var _binding: CartFragmentBinding? = null
     val binding get() = _binding
     var cartListList: MutableList<CartClass>? = null
@@ -43,8 +43,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     var name: String? = null
     var cartListIds: Any? = null
     var isCopuon = false
-    val dilveryFees = 10
+    val dilveryFees = 25
     var discount: Int = 0
+    lateinit var token: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +53,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
         cartListList = arrayListOf()
+        db = FirebaseFirestore.getInstance()
         getShippingInfo()
 
 
@@ -76,9 +78,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fabCounterFab = activity!!.findViewById(R.id.cartFloating)
+        fabCounterFab = requireActivity().findViewById(R.id.cartFloating)
         fabCounterFab.visibility = View.GONE
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
         RecycleSetup()
         getCart()
@@ -91,7 +93,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         }
 
         binding!!.checkOut.setOnClickListener {
-            placeOrder()
+            val orderID = UUID.randomUUID().toString()
+
+            placeOrder(getOrderDetails(orderID), orderID)
         }
 
 
@@ -117,8 +121,8 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun RecycleSetup() {
-        cartAdapter = CartRecycleAdapter(cartListList!!, this@CartListClass, context!!)
-        recyclerView = view!!.findViewById(R.id.cartRv)
+        cartAdapter = CartRecycleAdapter(cartListList!!, this@CartFragment, requireContext())
+        recyclerView = requireView().findViewById(R.id.cartRv)
         recyclerView!!.apply {
             adapter = cartAdapter
             layoutManager = LinearLayoutManager(context)
@@ -127,9 +131,9 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     }
 
-    override fun remove(position: Int) {
+    override fun remove(position: Int, item: CartClass) {
 
-        removeFromCart(position)
+        removeFromCart(position, item)
 
 
     }
@@ -174,18 +178,17 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun getCart() {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).get().addOnCompleteListener {
             if (it.exception != null) {
                 println(it.exception!!.message)
-                Toast.makeText(context!!, it.exception!!.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), it.exception!!.message, Toast.LENGTH_LONG).show()
             } else {
                 Thread(Runnable {
 
                     cartListIds = it.result!!.get("cart")
                     if (cartListIds != null) {
                         if ((cartListIds as List<*>).isEmpty()) {
-                            activity!!.runOnUiThread {
+                            requireActivity().runOnUiThread {
                                 hideEmptycart()
                             }
                         } else {
@@ -199,7 +202,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                                     } else {
                                         detleteAllcart()
                                     }
-                                    activity!!.runOnUiThread {
+                                    requireActivity().runOnUiThread {
                                         cartAdapter!!.notifyDataSetChanged()
                                         i++
                                         if (i == (cartListIds as List<*>).size) {
@@ -215,7 +218,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
                         }
                     } else {
-                        activity!!.runOnUiThread {
+                        requireActivity().runOnUiThread {
                             hideEmptycart()
                         }
                     }
@@ -229,18 +232,17 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
 
     }
 
-    fun removeFromCart(position: Int) {
-        cartListList!!.removeAt(position)
+    fun removeFromCart(position: Int, item: CartClass) {
+        cartListList!!.remove(item)
+        cartAdapter!!.notifyItemRemoved(position)
         var firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
         firebaseUpdatedList.removeAt(position)
         if (firebaseUpdatedList.isEmpty()) {
             hideEmptycart()
         }
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    cartAdapter!!.notifyItemRemoved(position)
                     updatePrice()
                 }
             }
@@ -266,14 +268,12 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         binding!!.loadingSpinner2.visibility = View.GONE
     }
 
-    fun placeOrder() {
-        loading()
-        val orderID = UUID.randomUUID().toString()
+    fun getOrderDetails(orderId: String): HashMap<String, Any> {
+
         val orderHashMap = HashMap<String, Any>()
         var countList: MutableList<String>? = null
         countList = arrayListOf()
         val promo = binding!!.promoLayout.text.toString().lowercase().trim()
-
         cartListList!!.forEachIndexed { index, cartClass ->
             val count = cartListList!![index].numberOFItems.toString()
             println(count)
@@ -281,17 +281,28 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         }
         orderHashMap["count"] = countList
         orderHashMap["items"] = cartListIds as List<String>
-        orderHashMap["cost"] = binding!!.totalCart.text
+        orderHashMap["cost"] = binding!!.totalCart.text.toString()
+        orderHashMap["subcost"] = binding!!.subtotal.text.toString()
+        orderHashMap["discount"] = binding!!.discountValue.text.toString()
+        orderHashMap["delivery"] = binding!!.delivery.text.toString()
         orderHashMap["status"] = "pending"
         orderHashMap["order_date"] = FieldValue.serverTimestamp()
-        orderHashMap["order_id"] = orderID
+        orderHashMap["order_id"] = orderId
         orderHashMap["user_id"] = userID
         orderHashMap["address"] = adress!!
         orderHashMap["phone"] = phone!!
         orderHashMap["name"] = name!!
         orderHashMap["promo"] = promo
-        db = FirebaseFirestore.getInstance()
-        db.collection("orders").document(orderID).set(orderHashMap).addOnCompleteListener {
+        orderHashMap["token"]=token
+
+        return orderHashMap
+
+    }
+
+    fun placeOrder(data: HashMap<String, Any>, orderId: String) {
+        loading()
+
+        db.collection("orders").document(orderId).set(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 clearCart()
             } else {
@@ -299,6 +310,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
             }
         }
     }
+
 
     fun loading() {
         binding!!.checkOut.visibility = View.GONE
@@ -314,7 +326,6 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
         val firebaseUpdatedList: MutableList<String> = cartListIds as MutableList<String>
         firebaseUpdatedList.clear()
 
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", firebaseUpdatedList)
             .addOnCompleteListener {
                 showBottomSheet()
@@ -324,7 +335,7 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     }
 
     fun showBottomSheet() {
-        val dialog = BottomSheetDialog(context!!)
+        val dialog = BottomSheetDialog(requireContext())
         val v = layoutInflater.inflate(R.layout.confirm_bottom_sheet, null)
         dialog.setContentView(v)
         dialog.dismissWithAnimation = true
@@ -352,36 +363,37 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
     fun detleteAllcart() {
         val emptlyList: List<String>
         emptlyList = arrayListOf()
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", emptlyList)
     }
 
     fun getShippingInfo() {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).get().addOnSuccessListener {
             adress = it.getString("address")
             phone = it.getString("phone")
             name = it.getString("name")
+            token = it.getString("token")!!
 
         }
     }
 
     fun getCouponDiscount() {
         if (binding!!.promoLayout.text.isNotEmpty()) {
+            loadingApply()
             val coupon = binding!!.promoLayout.text.toString().trim().lowercase()
-            db = FirebaseFirestore.getInstance()
             db.collection("coupons").whereEqualTo("title", coupon).get().addOnCompleteListener {
                 if (it.isSuccessful) {
+                    normalApply()
                     val couponsList = it.result!!.toObjects(CouponsClass::class.java)
                     if (couponsList.isNotEmpty()) {
                         if (couponsList[0].valid!!) {
                             lockpromo()
                             discount = couponsList[0].amount!!
+                            println(discount)
                             binding!!.discountValue.text = "- $discount EGP"
                             val currentSub =
                                 binding!!.subtotal.text.toString().substringBefore(" EGP").toInt()
                             val discountSub = currentSub - discount
-                            binding!!.subtotal.text = "$discountSub EGP"
+                            //    binding!!.subtotal.text = "${currentSub - discount} EGP"
                             binding!!.totalCart.text = "${discountSub + dilveryFees} EGP"
                         }
                     } else {
@@ -396,12 +408,26 @@ class CartListClass : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remov
                     }
 
 
+                } else {
+                    normalApply()
                 }
             }
+
+        } else {
 
         }
 
 
+    }
+
+    fun loadingApply() {
+        binding!!.apply.visibility = View.GONE
+        binding!!.applyProgress.visibility = View.VISIBLE
+    }
+
+    fun normalApply() {
+        binding!!.apply.visibility = View.VISIBLE
+        binding!!.applyProgress.visibility = View.GONE
     }
 
     fun lockpromo() {

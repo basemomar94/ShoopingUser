@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".ui.main_ui.favorite.FavoriteList">
+    tools:context=".ui.main_ui.favorite.FavoriteFragment">
 
     <ProgressBar
         android:id="@+id/loadingSpinner"

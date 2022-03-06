@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapter.removeInterface {
+class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapter.removeInterface {
     lateinit var recyclerView: RecyclerView
     lateinit var favAdapter: FavoriteRecycleAdapter
     lateinit var favoriteList: MutableList<FavoriteClass>
@@ -38,6 +38,7 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
         favoriteList = arrayListOf()
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
+        db = FirebaseFirestore.getInstance()
     }
 
     override fun onCreateView(
@@ -112,7 +113,6 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
     }
 
     fun gettingFav() {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).get().addOnCompleteListener { it ->
             if (it.exception != null) {
                 println(it.exception!!.message)
@@ -160,12 +160,10 @@ class FavoriteList : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapte
             hideEmptyFav()
         }
         firebaseUpdatedList.removeAt(position)
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", firebaseUpdatedList)
     }
 
     fun addtoCart(id: String, position: Int) {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
                 removeFromFav(position)

@@ -31,7 +31,8 @@ class CartRecycleAdapter(
         init {
             remove.setOnClickListener {
                 val p = adapterPosition
-                removedListener.remove(p)
+                val item = cartList[p]
+                removedListener.remove(p, item!!)
             }
             add.setOnClickListener {
                 val p = adapterPosition
@@ -56,8 +57,8 @@ class CartRecycleAdapter(
         val cartItem = cartList[position]
         holder.title.text = cartItem.title
         holder.amount.text = cartItem.numberOFItems.toString()
-        cartItem.currentPrice=((cartItem.numberOFItems) * (cartItem.price)!!.toInt()).toString()
-        holder.price.text=cartItem.currentPrice + " EGP"
+        cartItem.currentPrice = ((cartItem.numberOFItems) * (cartItem.price)!!.toInt()).toString()
+        holder.price.text = cartItem.currentPrice + " EGP"
         val url = cartItem.photo
         Glide.with(context).load(url).into(holder.photo)
     }
@@ -67,7 +68,7 @@ class CartRecycleAdapter(
     }
 
     interface removeInterface {
-        fun remove(position: Int)
+        fun remove(position: Int, item: CartClass)
         fun add(position: Int)
         fun minus(position: Int)
     }
