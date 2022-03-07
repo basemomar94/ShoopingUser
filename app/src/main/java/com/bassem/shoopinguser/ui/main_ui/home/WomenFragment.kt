@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
-import com.bassem.shoopinguser.databinding.HomeFragmentBinding
+import com.bassem.shoopinguser.databinding.WomenFragmentBinding
 import com.bassem.shoopinguser.models.ItemsClass
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
-class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
+class WomenFragment : Fragment(R.layout.women_fragment), HomeRecycleAdapter.expandInterface,
     SearchView.OnQueryTextListener {
-    lateinit var _binding: HomeFragmentBinding
+    lateinit var _binding: WomenFragmentBinding
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: HomeRecycleAdapter
@@ -57,7 +58,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        _binding = WomenFragmentBinding.inflate(inflater, container, false)
         return binding.root
 
 
@@ -85,7 +86,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
     fun recycleSetup() {
-        recyclerView = requireView().findViewById(R.id.trendingRv)
+        recyclerView = requireView().findViewById(R.id.womenRV)
         bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.VISIBLE
 
@@ -158,29 +159,23 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
 
     fun getItemsFromFirebase() {
-        db.collection("items").whereEqualTo("visible", true).get().addOnCompleteListener {
+        db.collection("items").whereEqualTo("visible", true).whereEqualTo("category","female").get().addOnCompleteListener {
             if (it.isSuccessful) {
                 var i = 0
                 for (dc: DocumentChange in it.result!!.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                        println(itemsList.size)
-                        adapter.notifyItemInserted(i)
-                        i++
                     }
-
-
-
+                    i++
+                    adapter.notifyDataSetChanged()
                     if (i == itemsList.size) {
-                        binding.trendingRv.visibility = View.VISIBLE
+                        binding.womenRV.visibility = View.VISIBLE
                         binding.shimmerLayout.visibility = View.GONE
                         getFavCounter()
                         getCartCounter()
-                        println(itemsList)
+
 
                     }
-
-
 
 
                 }

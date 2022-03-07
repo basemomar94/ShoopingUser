@@ -90,13 +90,7 @@ class HomeRecycleAdapter(
             holder.itemView.alpha = .5F
             holder.sold.visibility = View.VISIBLE
         }
-        if (item.visible!!) {
-            holder.itemView.visibility = View.VISIBLE
-        } else {
-            holder.itemView.visibility = View.GONE
 
-
-        }
         val url = item.photo
         Glide.with(context).load(url).into(holder.image)
     }

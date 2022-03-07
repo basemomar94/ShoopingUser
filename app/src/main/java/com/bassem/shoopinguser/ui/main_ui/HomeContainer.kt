@@ -21,14 +21,8 @@ class HomeContainer : AppCompatActivity() {
     lateinit var userID: String
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var fabCart: CounterFab
-    lateinit var homeslider: SliderView
-    lateinit var sliderHomeAdapter: HomeSliderAdapter
-    var imageList = listOf<Int>(
-        R.drawable.welcome1,
-        R.drawable.welcome2,
-        R.drawable.welcome3,
-        R.drawable.welcome4
-    )
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +43,6 @@ class HomeContainer : AppCompatActivity() {
 
         getFavCounter()
         getCartCounter()
-        sliderSetup()
 
     }
 
@@ -96,15 +89,5 @@ class HomeContainer : AppCompatActivity() {
         }
     }
 
-    fun sliderSetup() {
-        homeslider = findViewById(R.id.homeSlider)
-        sliderHomeAdapter = HomeSliderAdapter(imageList)
-        homeslider.apply {
-            setIndicatorAnimation(IndicatorAnimationType.WORM)
-            setSliderAdapter(sliderHomeAdapter)
-            startAutoCycle()
-        }
 
-
-    }
 }

@@ -7,9 +7,8 @@
 
     <fragment
         android:id="@+id/Home"
-        android:name="com.bassem.shoopinguser.ui.main_ui.home.HomeFragment"
-        android:label="home_fragment"
-        tools:layout="@layout/home_fragment" >
+        android:name="com.bassem.shoopinguser.ui.main_ui.home.HomePageContainer"
+        android:label="home_fragment">
         <action
             android:id="@+id/action_homeClass_to_expandView"
             app:destination="@id/expandView"

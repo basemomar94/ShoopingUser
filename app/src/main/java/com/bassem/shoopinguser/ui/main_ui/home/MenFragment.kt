@@ -11,15 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
-import com.bassem.shoopinguser.databinding.HomeFragmentBinding
+import com.bassem.shoopinguser.databinding.MenFragmentBinding
 import com.bassem.shoopinguser.models.ItemsClass
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 
-class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
+class MenFragment : Fragment(R.layout.men_fragment), HomeRecycleAdapter.expandInterface,
     SearchView.OnQueryTextListener {
-    lateinit var _binding: HomeFragmentBinding
+    lateinit var _binding: MenFragmentBinding
     val binding get() = _binding
     lateinit var recyclerView: RecyclerView
     lateinit var adapter: HomeRecycleAdapter
@@ -57,7 +58,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        _binding = MenFragmentBinding.inflate(inflater, container, false)
         return binding.root
 
 
@@ -67,6 +68,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         super.onViewCreated(view, savedInstanceState)
         fabCart = requireActivity().findViewById(R.id.cartFloating)
         fabCart.visibility = View.VISIBLE
+
         itemsList = arrayListOf()
         recycleSetup()
         if (itemsList.isEmpty()) {
@@ -85,7 +87,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
     fun recycleSetup() {
-        recyclerView = requireView().findViewById(R.id.trendingRv)
+        recyclerView = requireView().findViewById(R.id.menRv)
         bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.VISIBLE
 
@@ -158,34 +160,29 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
 
     fun getItemsFromFirebase() {
-        db.collection("items").whereEqualTo("visible", true).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                var i = 0
-                for (dc: DocumentChange in it.result!!.documentChanges) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                        println(itemsList.size)
-                        adapter.notifyItemInserted(i)
+        db.collection("items").whereEqualTo("visible", true).whereEqualTo("category", "male").get()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    var i = 0
+                    for (dc: DocumentChange in it.result!!.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            itemsList.add(dc.document.toObject(ItemsClass::class.java))
+                        }
                         i++
+                        adapter.notifyDataSetChanged()
+                        if (i == itemsList.size) {
+                            binding.menRv.visibility = View.VISIBLE
+                            binding.shimmerLayout.visibility = View.GONE
+                            getFavCounter()
+                            getCartCounter()
+
+
+                        }
+
+
                     }
-
-
-
-                    if (i == itemsList.size) {
-                        binding.trendingRv.visibility = View.VISIBLE
-                        binding.shimmerLayout.visibility = View.GONE
-                        getFavCounter()
-                        getCartCounter()
-                        println(itemsList)
-
-                    }
-
-
-
-
                 }
             }
-        }
 
     }
 
