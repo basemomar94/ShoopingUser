@@ -71,6 +71,8 @@ class HomePageContainer : Fragment(R.layout.home_page_container) {
         sliderHomeAdapter = HomeSliderAdapter(imageList)
         homeslider.apply {
             setIndicatorAnimation(IndicatorAnimationType.WORM)
+            autoCycleDirection=2
+            scrollTimeInSec=2
             setSliderAdapter(sliderHomeAdapter)
             startAutoCycle()
         }

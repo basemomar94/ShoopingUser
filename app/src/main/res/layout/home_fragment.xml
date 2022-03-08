@@ -31,8 +31,7 @@
         android:id="@+id/shimmerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:visibility="gone">
+        android:orientation="vertical">
 
         <com.facebook.shimmer.ShimmerFrameLayout
             android:layout_width="match_parent"

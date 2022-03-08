@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/itemsappbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible">
+        android:visibility="visible"
+        app:layout_anchorGravity="top">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
@@ -19,11 +21,10 @@
                 android:id="@+id/homeSlider"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                app:sliderAnimationDuration="600"
                 app:sliderAutoCycleDirection="back_and_forth"
                 app:sliderAutoCycleEnabled="true"
-                app:sliderIndicatorAnimationDuration="600"
                 app:sliderIndicatorGravity="bottom|center_horizontal"
+                app:sliderIndicatorSelectedColor="@color/orange"
                 app:sliderIndicatorMargin="15dp"
                 app:sliderScrollTimeInSec="2">
 
@@ -36,12 +37,13 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="enterAlways"
 
-            app:tabMode="fixed"/>
+            app:tabMode="fixed" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/homePager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

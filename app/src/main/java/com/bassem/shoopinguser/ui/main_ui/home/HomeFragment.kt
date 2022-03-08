@@ -100,13 +100,13 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
                 when (newState) {
                     RecyclerView.SCROLL_STATE_DRAGGING -> {
                         fabCart.visibility = View.GONE
-                        bottomNavigationView.visibility = View.GONE
+                    //    bottomNavigationView.visibility = View.GONE
 
 
                     }
                     RecyclerView.SCROLL_STATE_IDLE -> {
                         fabCart.visibility = View.VISIBLE
-                        bottomNavigationView.visibility = View.VISIBLE
+                    //    bottomNavigationView.visibility = View.VISIBLE
 
 
                     }
@@ -123,12 +123,13 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         val itemHere = itemsList[position]
         if (!itemHere.favorite) {
             itemHere.favorite = true
+            addtoFavorite(id)
+
         } else {
             itemHere.favorite = false
             removeFromFav(position, id)
 
         }
-        addtoFavorite(id)
     }
 
     fun goToView(documentid: String) {
@@ -166,9 +167,8 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
                         itemsList.add(dc.document.toObject(ItemsClass::class.java))
                         println(itemsList.size)
                         adapter.notifyItemInserted(i)
-                        i++
                     }
-
+                    i++
 
 
                     if (i == itemsList.size) {

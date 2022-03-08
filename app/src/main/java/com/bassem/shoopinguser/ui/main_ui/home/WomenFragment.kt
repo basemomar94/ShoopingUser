@@ -101,13 +101,13 @@ class WomenFragment : Fragment(R.layout.women_fragment), HomeRecycleAdapter.expa
                 when (newState) {
                     RecyclerView.SCROLL_STATE_DRAGGING -> {
                         fabCart.visibility = View.GONE
-                        bottomNavigationView.visibility = View.GONE
+                     //   bottomNavigationView.visibility = View.GONE
 
 
                     }
                     RecyclerView.SCROLL_STATE_IDLE -> {
                         fabCart.visibility = View.VISIBLE
-                        bottomNavigationView.visibility = View.VISIBLE
+                       // bottomNavigationView.visibility = View.VISIBLE
 
 
                     }
@@ -124,12 +124,13 @@ class WomenFragment : Fragment(R.layout.women_fragment), HomeRecycleAdapter.expa
         val itemHere = itemsList[position]
         if (!itemHere.favorite) {
             itemHere.favorite = true
+            addtoFavorite(id)
+
         } else {
             itemHere.favorite = false
             removeFromFav(position, id)
 
         }
-        addtoFavorite(id)
     }
 
     fun goToView(documentid: String) {
@@ -165,9 +166,10 @@ class WomenFragment : Fragment(R.layout.women_fragment), HomeRecycleAdapter.expa
                 for (dc: DocumentChange in it.result!!.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         itemsList.add(dc.document.toObject(ItemsClass::class.java))
+                        adapter.notifyItemInserted(i)
+
                     }
                     i++
-                    adapter.notifyDataSetChanged()
                     if (i == itemsList.size) {
                         binding.womenRV.visibility = View.VISIBLE
                         binding.shimmerLayout.visibility = View.GONE
