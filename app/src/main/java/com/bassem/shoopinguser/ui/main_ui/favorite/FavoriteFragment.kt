@@ -20,18 +20,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAdapter.removeInterface {
-    lateinit var recyclerView: RecyclerView
-    lateinit var favAdapter: FavoriteRecycleAdapter
-    lateinit var favoriteList: MutableList<FavoriteClass>
-    var _binding: FavoriteFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var fabCart: CounterFab
-    lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var db: FirebaseFirestore
-    lateinit var auth: FirebaseAuth
-    lateinit var userID: String
-    var favListIds: Any? = null
+class FavoriteFragment : Fragment(R.layout.favorite_fragment),
+    FavoriteRecycleAdapter.removeInterface {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var favAdapter: FavoriteRecycleAdapter
+    private lateinit var favoriteList: MutableList<FavoriteClass>
+    private var _binding: FavoriteFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+    private lateinit var userID: String
+    private var favListIds: Any? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,54 +52,33 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = activity!!.findViewById(R.id.cartFloating)
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         recycleSetup()
-        gettingFav()
-
-        fabCart.setOnClickListener {
-            findNavController().navigate(R.id.action_Favorite_to_cartListClass)
+        if (favoriteList.isEmpty()) {
+            gettingFav()
+        } else {
+            favoriteList.clear()
+            gettingFav()
         }
+
+
         binding!!.startShop.setOnClickListener {
             findNavController().navigate(R.id.action_Favorite_to_Home)
         }
 
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        favoriteList.clear()
-    }
 
-    override fun onPause() {
-        super.onPause()
-        favoriteList.clear()
-    }
-
-    fun recycleSetup() {
-        favAdapter = FavoriteRecycleAdapter(favoriteList, this, context!!)
-        recyclerView = view!!.findViewById(R.id.favoriteRv)
+    private fun recycleSetup() {
+        favAdapter = FavoriteRecycleAdapter(favoriteList, this, requireContext())
+        recyclerView = requireView().findViewById(R.id.favoriteRv)
         recyclerView.apply {
             adapter = favAdapter
             layoutManager = GridLayoutManager(context, 2)
             setHasFixedSize(true)
 
         }
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_DRAGGING -> {
-                        fabCart.visibility = View.GONE
-                        bottomNavigationView.visibility = View.GONE
-                    }
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        fabCart.visibility = View.VISIBLE
-                        bottomNavigationView.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })
+
     }
 
     override fun remove(position: Int) {
@@ -112,7 +91,7 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
 
     }
 
-    fun gettingFav() {
+    private fun gettingFav() {
         db.collection("users").document(userID).get().addOnCompleteListener { it ->
             if (it.exception != null) {
                 println(it.exception!!.message)
@@ -122,7 +101,7 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
 
                 if (favListIds != null) {
                     if ((favListIds as List<*>).isEmpty()) {
-                        activity!!.runOnUiThread {
+                        requireActivity().runOnUiThread {
                             hideEmptyFav()
 
                         }
@@ -152,10 +131,10 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
 
     }
 
-    fun removeFromFav(position: Int) {
+    private fun removeFromFav(position: Int) {
         favoriteList.removeAt(position)
         favAdapter.notifyItemRemoved(position)
-        var firebaseUpdatedList: MutableList<String> = favListIds as MutableList<String>
+        val firebaseUpdatedList: MutableList<String> = favListIds as MutableList<String>
         if (firebaseUpdatedList.isEmpty()) {
             hideEmptyFav()
         }
@@ -163,7 +142,7 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
         db.collection("users").document(userID).update("fav", firebaseUpdatedList)
     }
 
-    fun addtoCart(id: String, position: Int) {
+    private fun addtoCart(id: String, position: Int) {
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
                 removeFromFav(position)
@@ -171,13 +150,13 @@ class FavoriteFragment : Fragment(R.layout.favorite_fragment), FavoriteRecycleAd
 
     }
 
-    fun hideEmptyFav() {
+    private fun hideEmptyFav() {
         binding!!.emptyFav.visibility = View.VISIBLE
         binding!!.loadingSpinner.visibility = View.GONE
         binding!!.favoriteRv.visibility = View.GONE
     }
 
-    fun showFav() {
+    private fun showFav() {
         binding!!.emptyFav.visibility = View.GONE
         binding!!.favoriteRv.visibility = View.VISIBLE
         binding!!.loadingSpinner.visibility = View.GONE

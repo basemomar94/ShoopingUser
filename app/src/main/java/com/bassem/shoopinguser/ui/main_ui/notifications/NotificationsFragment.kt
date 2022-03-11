@@ -22,7 +22,6 @@ class NotificationsFragment : Fragment(R.layout.notification_fragment) {
     lateinit var recyclerView: RecyclerView
     lateinit var notiList: MutableList<NotificationsClass>
     lateinit var notiAdapter: NotificationsRecycleAdapter
-    lateinit var fabCart: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
 
 
@@ -104,43 +103,19 @@ class NotificationsFragment : Fragment(R.layout.notification_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recycleSetup()
-        fabCart = activity!!.findViewById(R.id.cartFloating)
-        bottomNavigationView = activity!!.findViewById(R.id.bottomAppBar)
-        fabCart.setOnClickListener {
-            findNavController().navigate(R.id.action_Notifications_to_cartListClass)
-        }
+
 
     }
 
     fun recycleSetup() {
         notiAdapter = NotificationsRecycleAdapter(notiList)
-        recyclerView = view!!.findViewById(R.id.notificationsRV)
+        recyclerView = requireView().findViewById(R.id.notificationsRV)
         recyclerView.apply {
             adapter = notiAdapter
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(true)
         }
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_DRAGGING -> {
-                        fabCart.visibility = View.GONE
-                        bottomNavigationView.visibility = View.GONE
 
-
-                    }
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        fabCart.visibility = View.VISIBLE
-                        bottomNavigationView.visibility = View.VISIBLE
-
-
-                    }
-                }
-
-
-            }
-        })
 
     }
 

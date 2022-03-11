@@ -5,6 +5,7 @@
     <item
         android:icon="@drawable/ic_baseline_dashboard_24"
         android:title="Item"
+        android:visibility="gone"
         app:showAsAction="always" />
     <item
         android:id="@+id/app_bar_search"

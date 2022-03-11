@@ -28,8 +28,8 @@ class HomeRecycleAdapter(
         val cartImag = itemview.findViewById<ImageView>(R.id.cartItemView)
         val favCard = itemview.findViewById<CardView>(R.id.favCart)
         val cartCard = itemview.findViewById<CardView>(R.id.cartCard)
-
         val sold = itemview.findViewById<ImageView>(R.id.soldImg)
+
 
         init {
 
@@ -67,15 +67,18 @@ class HomeRecycleAdapter(
         val itemPostien = position
         holder.title.text = item.title
         holder.price.text = "${item.price} EGP"
-        val favorite = getDrawable(context, R.drawable.favoritered)
+        val favorite = getDrawable(context, R.drawable.favorange)
         val unfavorite = getDrawable(context, R.drawable.ic_baseline_favorite_border_24)
         val addcart = getDrawable(context, R.drawable.ic_baseline_add_shopping_cart_24)
         val incart = getDrawable(context, R.drawable.addedcart)
 
         if (item.favorite) {
-            holder.favorite.setImageDrawable(favorite)
+            holder.favCard.setCardBackgroundColor(Color.parseColor("#FFA56D"))
+           holder.favorite.setImageDrawable(favorite)
         } else {
-            holder.favorite.setImageDrawable(unfavorite)
+           holder.favorite.setImageDrawable(unfavorite)
+            holder.favCard.setCardBackgroundColor(Color.WHITE)
+
 
         }
         if (item.cart) {

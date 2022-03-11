@@ -1,27 +1,21 @@
 package com.bassem.shoopinguser.ui.main_ui
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
-import com.bassem.shoopinguser.adapters.HomeSliderAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
-import com.smarteist.autoimageslider.SliderView
 
 class HomeContainer : AppCompatActivity() {
     lateinit var db: FirebaseFirestore
     lateinit var auth: FirebaseAuth
     lateinit var userID: String
     lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var fabCart: CounterFab
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +24,6 @@ class HomeContainer : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
-        fabCart = findViewById(R.id.cartFloating)
         supportActionBar!!.title = ""
         bottomNavigationView = findViewById(R.id.bottomAppBar)
         val navHostFragment =
@@ -81,7 +74,22 @@ class HomeContainer : AppCompatActivity() {
                 if (cartList != null) {
                     val cartCount = (cartList as List<String>).size
                     if (cartCount != null) {
-                        fabCart.count = cartCount
+                        val cartCount = (cartList).size
+                        println(cartCount)
+                        bottomNavigationView.getOrCreateBadge(R.id.Cart).apply {
+                            badgeTextColor = Color.DKGRAY
+                            if (cartCount == 0) {
+                                backgroundColor = Color.parseColor("#FFFFFF")
+                                clearNumber()
+                                clearColorFilter()
+
+                            } else {
+                                number = cartCount
+                                backgroundColor = Color.parseColor("#FFA56D")
+
+
+                            }
+                        }
                     }
                 }
 

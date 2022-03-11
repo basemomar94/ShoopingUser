@@ -30,7 +30,6 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
     lateinit var orderList: MutableList<OrderClass>
     var _binding: OrdersFragmentBinding? = null
     val binding get() = _binding
-    lateinit var fabCart: CounterFab
     lateinit var bottomNavigationView: BottomNavigationView
     lateinit var db: FirebaseFirestore
     lateinit var auth: FirebaseAuth
@@ -56,7 +55,6 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = requireActivity().findViewById(R.id.cartFloating)
         bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
 

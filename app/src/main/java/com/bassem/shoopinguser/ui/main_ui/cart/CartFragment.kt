@@ -27,25 +27,23 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.removeInterface {
-    var _binding: CartFragmentBinding? = null
-    val binding get() = _binding
-    var cartListList: MutableList<CartClass>? = null
-    var cartAdapter: CartRecycleAdapter? = null
-    var recyclerView: RecyclerView? = null
-    lateinit var fabCounterFab: CounterFab
-    lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var userID: String
-    lateinit var auth: FirebaseAuth
-    lateinit var db: FirebaseFirestore
-    var adress: String? = null
-    var phone: String? = null
-    var total: Int? = null
-    var name: String? = null
-    var cartListIds: Any? = null
-    var isCopuon = false
-    val dilveryFees = 25
-    var discount: Int = 0
-    lateinit var token: String
+    private  var _binding: CartFragmentBinding? = null
+    private  val binding get() = _binding
+    private  var cartListList: MutableList<CartClass>? = null
+    private  var cartAdapter: CartRecycleAdapter? = null
+    private  var recyclerView: RecyclerView? = null
+    private  lateinit var userID: String
+    private  lateinit var auth: FirebaseAuth
+    private  lateinit var db: FirebaseFirestore
+    private  var adress: String? = null
+    private   var phone: String? = null
+    private  var total: Int? = null
+    private  var name: String? = null
+    private   var cartListIds: Any? = null
+    private  var isCopuon = false
+    private val dilveryFees = 25
+    private   var discount: Int = 0
+    private lateinit var token: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,20 +66,12 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         return binding!!.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        fabCounterFab.visibility = View.VISIBLE
-        bottomNavigationView.visibility = View.VISIBLE
 
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fabCounterFab = requireActivity().findViewById(R.id.cartFloating)
-        fabCounterFab.visibility = View.GONE
-        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
-        bottomNavigationView.visibility = View.GONE
+
         RecycleSetup()
         getCart()
 

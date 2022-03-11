@@ -7,25 +7,15 @@
     android:orientation="vertical"
     tools:context=".ui.main_ui.HomeContainer">
 
-    <com.andremion.counterfab.CounterFab
-        android:id="@+id/cartFloating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="64dp"
-        android:background="@color/orange"
-        android:clickable="true"
-        app:backgroundTint="@color/orange"
-        app:srcCompat="@drawable/ic_baseline_shopping_cart_24" />
-
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center|top"
         app:defaultNavHost="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:navGraph="@navigation/nav_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -1,6 +1,7 @@
 package com.bassem.shoopinguser.ui.main_ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -20,29 +21,32 @@ import com.google.firebase.firestore.*
 class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
     SearchView.OnQueryTextListener {
     lateinit var _binding: HomeFragmentBinding
-    val binding get() = _binding
-    lateinit var recyclerView: RecyclerView
-    lateinit var adapter: HomeRecycleAdapter
-    lateinit var itemsList: MutableList<ItemsClass>
-    lateinit var fabCart: CounterFab
-    lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var db: FirebaseFirestore
-    lateinit var userID: String
-    lateinit var auth: FirebaseAuth
-    var favList: MutableList<String> = arrayListOf()
-    var cartList: MutableList<String> = arrayListOf()
+    private val binding get() = _binding
+    private lateinit var recyclerView: RecyclerView
+    private var adapter: HomeRecycleAdapter? = null
+    private lateinit var itemsList: MutableList<ItemsClass>
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var db: FirebaseFirestore
+    private lateinit var userID: String
+    private lateinit var auth: FirebaseAuth
+    private var favList: MutableList<String> = arrayListOf()
+    private var cartList: MutableList<String> = arrayListOf()
+    private var key: String? = null
+    private val TAG = "HomeTag"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        val args = arguments
+        key = args?.getString("key")
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
         db = FirebaseFirestore.getInstance()
+        Log.v(TAG, "$key onCreate")
 
 
     }
-
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -58,34 +62,35 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         savedInstanceState: Bundle?
     ): View? {
         _binding = HomeFragmentBinding.inflate(inflater, container, false)
+        Log.v(TAG, "$key onCreateView")
+
         return binding.root
 
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.v(TAG, "$key onResume")
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = requireActivity().findViewById(R.id.cartFloating)
-        fabCart.visibility = View.VISIBLE
+        Log.v(TAG, "$key onViewCreated")
+
         itemsList = arrayListOf()
-        recycleSetup()
-        if (itemsList.isEmpty()) {
-            getItemsFromFirebase()
+        itemsList.clear()
+        getItemsFromFirebase()
 
-        } else {
-            itemsList.clear()
-            getItemsFromFirebase()
-        }
-
-        fabCart.setOnClickListener {
-            findNavController().navigate(R.id.action_homeClass_to_cartListClass)
-        }
 
 
     }
 
-    fun recycleSetup() {
-        recyclerView = requireView().findViewById(R.id.trendingRv)
+    private fun recycleSetup() {
+        view?.let {
+            recyclerView = it.findViewById(R.id.trendingRv)
+        }
         bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.VISIBLE
 
@@ -94,45 +99,26 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         recyclerView.layoutManager = GridLayoutManager(context, 2)
         recyclerView.setHasFixedSize(true)
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_DRAGGING -> {
-                        fabCart.visibility = View.GONE
-                    //    bottomNavigationView.visibility = View.GONE
-
-
-                    }
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        fabCart.visibility = View.VISIBLE
-                    //    bottomNavigationView.visibility = View.VISIBLE
-
-
-                    }
-                }
-
-
-            }
-        })
 
     }
 
     override fun makeFavorite(id: String, position: Int, fav: Boolean, item: ItemsClass) {
-        adapter.notifyItemChanged(position)
         val itemHere = itemsList[position]
+        addtoFavorite(id)
+        println(itemHere.favorite)
         if (!itemHere.favorite) {
             itemHere.favorite = true
-            addtoFavorite(id)
 
         } else {
             itemHere.favorite = false
             removeFromFav(position, id)
 
         }
+        adapter?.notifyItemChanged(position)
+
     }
 
-    fun goToView(documentid: String) {
+    private fun goToView(documentid: String) {
         val bundle = Bundle()
         bundle.putString("document", documentid)
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
@@ -152,44 +138,70 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
             itemHere.cart = false
             removeFromCart(position, id)
         }
-        adapter.notifyItemChanged(position)
+        adapter?.notifyItemChanged(position)
 
 
     }
 
 
-    fun getItemsFromFirebase() {
-        db.collection("items").whereEqualTo("visible", true).get().addOnCompleteListener {
-            if (it.isSuccessful) {
-                var i = 0
-                for (dc: DocumentChange in it.result!!.documentChanges) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                        println(itemsList.size)
-                        adapter.notifyItemInserted(i)
+    private fun getItemsFromFirebase() {
+        if (key == "all") {
+            db.collection("items").whereEqualTo("visible", true).get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        var i = 0
+                        for (dc: DocumentChange in it.result!!.documentChanges) {
+                            if (dc.type == DocumentChange.Type.ADDED) {
+                                itemsList.add(dc.document.toObject(ItemsClass::class.java))
+                            }
+                            i++
+
+
+                            if (i == itemsList.size) {
+                                binding.trendingRv.visibility = View.VISIBLE
+                                binding.shimmerLayout.visibility = View.GONE
+                                getFavCounter()
+                                getCartCounter()
+
+                            }
+
+
+                        }
+                        recycleSetup()
                     }
-                    i++
-
-
-                    if (i == itemsList.size) {
-                        binding.trendingRv.visibility = View.VISIBLE
-                        binding.shimmerLayout.visibility = View.GONE
-                        getFavCounter()
-                        getCartCounter()
-                        println(itemsList)
-
-                    }
-
-
-
-
                 }
-            }
+        } else {
+            db.collection("items").whereEqualTo("visible", true).whereEqualTo("category", key).get()
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        var i = 0
+                        for (dc: DocumentChange in it.result!!.documentChanges) {
+                            if (dc.type == DocumentChange.Type.ADDED) {
+                                itemsList.add(dc.document.toObject(ItemsClass::class.java))
+//                        adapter.notifyItemInserted(i)
+                            }
+                            i++
+
+
+                            if (i == itemsList.size) {
+                                binding.trendingRv.visibility = View.VISIBLE
+                                binding.shimmerLayout.visibility = View.GONE
+                                getFavCounter()
+                                getCartCounter()
+
+                            }
+
+
+                        }
+                        recycleSetup()
+                    }
+                }
         }
 
+
     }
 
-    fun getCartCounter() {
+    private fun getCartCounter() {
         db.collection("users").document(userID).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 cartList = it.result!!.get("cart") as MutableList<String>
@@ -197,7 +209,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
                     cartList.forEach { cart ->
                         if (item.id == cart) {
                             item.cart = true
-                            adapter.notifyDataSetChanged()
+                            adapter?.notifyDataSetChanged()
                         }
                     }
                 }
@@ -206,7 +218,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         }
     }
 
-    fun getFavCounter() {
+    private fun getFavCounter() {
         db.collection("users").document(userID).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 favList = it.result!!.get("fav") as MutableList<String>
@@ -214,7 +226,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
                     favList.forEach { fav ->
                         if (item.id == fav) {
                             item.favorite = true
-                            adapter.notifyDataSetChanged()
+                            adapter?.notifyDataSetChanged()
                         }
 
                     }
@@ -226,7 +238,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     }
 
-    fun addtoFavorite(id: String) {
+    private fun addtoFavorite(id: String) {
         db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
 
@@ -235,7 +247,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     }
 
-    fun addtoCart(id: String) {
+    private fun addtoCart(id: String) {
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
             }
@@ -253,36 +265,41 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
 
-    fun filterFun(title: String) {
+    private fun filterFun(title: String) {
         val filterList: MutableList<ItemsClass> = arrayListOf()
         itemsList.forEach {
             if (it.title!!.lowercase().contains(title)) {
                 filterList.add(it)
             }
         }
-        adapter.filter(filterList)
+        adapter?.filter(filterList)
 
     }
 
-    fun removeFromFav(position: Int, item: String) {
+    private fun removeFromFav(position: Int, item: String) {
         favList.remove(item)
-        adapter.notifyItemChanged(position)
-        db.collection("users").document(userID).update("fav", favList).addOnCompleteListener {
-            if (it.isSuccessful) {
+        adapter?.notifyItemChanged(position)
+        db.collection("users").document(userID).update("fav", FieldValue.arrayRemove(item))
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                }
             }
-        }
     }
 
     private fun removeFromCart(position: Int, item: String) {
         cartList.remove(item)
-        adapter.notifyItemChanged(position)
-        db.collection("users").document(userID).update("cart", cartList)
+        print(cartList.size)
+        adapter?.notifyItemChanged(position)
+        db.collection("users").document(userID).update("cart", FieldValue.arrayRemove(item))
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                 }
             }
 
+
     }
 
 
 }
+
+

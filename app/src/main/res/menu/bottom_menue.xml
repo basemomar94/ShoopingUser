@@ -10,9 +10,9 @@
         android:icon="@drawable/ic_baseline_favorite_24"
         android:title="Favorite" />
     <item
-        android:id="@+id/Notifications"
-        android:icon="@drawable/ic_baseline_notifications_24"
-        android:title="Notifications" />
+        android:id="@+id/Cart"
+        android:icon="@drawable/ic_baseline_shopping_cart_24"
+        android:title="Cart" />
     <item
         android:id="@+id/account"
         android:icon="@drawable/ic_baseline_person_24"

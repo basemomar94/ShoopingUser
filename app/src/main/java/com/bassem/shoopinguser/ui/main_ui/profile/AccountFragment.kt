@@ -17,7 +17,6 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
     var _binding: AccountFragmentBinding? = null
     val binding get() = _binding
     lateinit var auth: FirebaseAuth
-    lateinit var fabCart: CounterFab
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +34,6 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCart = requireActivity().findViewById(R.id.cartFloating)
-        fabCart.visibility = View.GONE
         //listners
         binding!!.myordersLayout.setOnClickListener {
             findNavController().navigate(R.id.action_account_to_ordersList)
@@ -48,7 +45,6 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
 
     override fun onDetach() {
         super.onDetach()
-        fabCart.visibility = View.VISIBLE
     }
 
     fun logOut() {

@@ -19,15 +19,14 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
-    var _binding: ExpandFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var fabCounterFab: CounterFab
-    lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var db: FirebaseFirestore
-    lateinit var documentID: String
-    lateinit var userID: String
-    lateinit var itemID: String
-    lateinit var auth: FirebaseAuth
+    private  var _binding: ExpandFragmentBinding? = null
+    private   val binding get() = _binding
+    private  lateinit var bottomNavigationView: BottomNavigationView
+    private   lateinit var db: FirebaseFirestore
+    private  lateinit var documentID: String
+    private   lateinit var userID: String
+    private  lateinit var itemID: String
+    private  lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,8 +54,6 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fabCounterFab = requireActivity().findViewById(R.id.cartFloating)
-        fabCounterFab.visibility = View.GONE
         bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
         bottomNavigationView.visibility = View.GONE
 
@@ -80,7 +77,6 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
 
     override fun onResume() {
         super.onResume()
-        fabCounterFab.visibility = View.GONE
         bottomNavigationView.visibility = View.GONE
 
 
@@ -88,12 +84,11 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
 
     override fun onDetach() {
         super.onDetach()
-        fabCounterFab.visibility = View.VISIBLE
         bottomNavigationView.visibility = View.VISIBLE
 
     }
 
-    fun gettingData() {
+    private fun gettingData() {
         db = FirebaseFirestore.getInstance()
         db.collection("items").document(documentID).get().addOnCompleteListener {
             if (it.isSuccessful) {
@@ -120,7 +115,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         }
     }
 
-    fun addtoCart() {
+    private fun addtoCart() {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("cart", FieldValue.arrayUnion(documentID))
             .addOnCompleteListener {
@@ -129,7 +124,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
 
     }
 
-    fun showButtonSheet() {
+    private fun showButtonSheet() {
         val dialog = BottomSheetDialog(requireContext())
         val v = layoutInflater.inflate(R.layout.order_bottom_sheet, null)
         dialog.setContentView(v)
@@ -146,7 +141,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         dialog.show()
     }
 
-    fun addtoFavorite(id: String) {
+    private fun addtoFavorite(id: String) {
         db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
@@ -158,12 +153,12 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
 
     }
 
-    fun itemAvaliable() {
+    private fun itemAvaliable() {
         binding!!.progressBar5.visibility = View.GONE
         binding!!.expandLayout.visibility = View.VISIBLE
     }
 
-    fun itemUnavialable() {
+    private fun itemUnavialable() {
         binding!!.progressBar5.visibility = View.GONE
         binding!!.expandLayout.visibility = View.VISIBLE
         binding!!.soldView.visibility = View.VISIBLE

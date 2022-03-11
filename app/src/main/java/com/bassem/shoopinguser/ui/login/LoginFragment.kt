@@ -13,8 +13,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment(R.layout.login_fragment) {
-    var _binding: LoginFragmentBinding? = null
-    val binding get() = _binding
+    private var _binding: LoginFragmentBinding? = null
+    private val binding get() = _binding
     lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

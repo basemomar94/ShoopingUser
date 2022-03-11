@@ -18,7 +18,7 @@
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_homeClass_to_cartListClass"
-            app:destination="@id/cartListClass"
+            app:destination="@id/Cart"
             app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
@@ -28,13 +28,13 @@
         tools:layout="@layout/expand_fragment" >
         <action
             android:id="@+id/action_expandView_to_cartListClass"
-            app:destination="@id/cartListClass" />
+            app:destination="@id/Cart" />
         <action
             android:id="@+id/action_expandView_to_Home"
             app:destination="@id/Home" />
     </fragment>
     <fragment
-        android:id="@+id/cartListClass"
+        android:id="@+id/Cart"
         android:name="com.bassem.shoopinguser.ui.main_ui.cart.CartFragment"
         android:label="cart_fragment"
         tools:layout="@layout/cart_fragment" >
@@ -52,7 +52,7 @@
         tools:layout="@layout/favorite_fragment" >
         <action
             android:id="@+id/action_Favorite_to_cartListClass"
-            app:destination="@id/cartListClass" />
+            app:destination="@id/Cart" />
         <action
             android:id="@+id/action_Favorite_to_Home"
             app:destination="@id/Home" />
@@ -64,19 +64,13 @@
         tools:layout="@layout/account_fragment" >
         <action
             android:id="@+id/action_account_to_cartListClass"
-            app:destination="@id/cartListClass" />
+            app:destination="@id/Cart" />
         <action
             android:id="@+id/action_account_to_ordersList"
             app:destination="@id/ordersList" />
-    </fragment>
-    <fragment
-        android:id="@+id/Notifications"
-        android:name="com.bassem.shoopinguser.ui.main_ui.notifications.NotificationsFragment"
-        android:label="notification_fragment"
-        tools:layout="@layout/notification_fragment" >
         <action
-            android:id="@+id/action_Notifications_to_cartListClass"
-            app:destination="@id/cartListClass" />
+            android:id="@+id/action_account_to_Favorite"
+            app:destination="@id/Cart" />
     </fragment>
     <fragment
         android:id="@+id/ordersList"

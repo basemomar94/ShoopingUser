@@ -16,20 +16,23 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import java.util.*
+import kotlin.collections.HashMap
 
 class SignupFragment : Fragment(R.layout.signup_fragment) {
     var _binding: SignupFragmentBinding? = null
     val binding get() = _binding
-    lateinit var auth: FirebaseAuth
-    lateinit var db: FirebaseFirestore
-    lateinit var mail: String
-    lateinit var password: String
-    lateinit var passwordCheck: String
-    lateinit var name: String
-    lateinit var adress: String
-    lateinit var phone: String
-    lateinit var userId: String
+    private var auth: FirebaseAuth  ?=null
+    private var db: FirebaseFirestore?=null
+    private var mail: String?=null
+    private var password: String?=null
+    private var passwordCheck: String?=null
+    private var name: String?=null
+    private var adress: String?=null
+    private var phone: String?=null
+    private var userId: String?=null
     var token: String? = null
+    val fcm: FirebaseMessaging? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,13 +94,13 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
     }
 
     fun checkEmpty() {
-        errorEmpty(mail, binding!!.mailLayout)
-        errorEmpty(password, binding!!.passwordLayout)
-        errorEmpty(passwordCheck, binding!!.passwordcheckLayout)
-        errorEmpty(name, binding!!.nameLayout)
-        errorEmpty(adress, binding!!.adressLayout)
-        errorEmpty(phone, binding!!.phoneLayout)
-        if (mail.isNotEmpty() && password.isNotEmpty() && passwordCheck.isNotEmpty() && name.isNotEmpty() && adress.isNotEmpty()) {
+        mail?.let { errorEmpty(it, binding!!.mailLayout) }
+        password?.let { errorEmpty(it, binding!!.passwordLayout) }
+        passwordCheck?.let { errorEmpty(it, binding!!.passwordcheckLayout) }
+        name?.let { errorEmpty(it, binding!!.nameLayout) }
+        adress?.let { errorEmpty(it, binding!!.adressLayout) }
+        phone?.let { errorEmpty(it, binding!!.phoneLayout) }
+        if (mail!!.isNotEmpty() && password!!.isNotEmpty() && passwordCheck!!.isNotEmpty() && name!!.isNotEmpty() && adress!!.isNotEmpty()) {
 
             if (password != passwordCheck) {
                 binding!!.passwordLayout.error = "Your password should be identical"
@@ -111,14 +114,14 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
     fun firebaseAuth() {
 
         loading()
-        auth.createUserWithEmailAndPassword(mail, password).addOnCompleteListener {
+        auth?.createUserWithEmailAndPassword(mail!!, password!!)?.addOnCompleteListener {
             if (it.isSuccessful) {
-                userId = auth.uid!!
-                addtoDB(getSignupInfo(userId))
+                userId = auth?.uid!!
+                addtoDB(getSignupInfo(userId!!))
             } else {
                 normal()
             }
-        }.addOnFailureListener {
+        }?.addOnFailureListener {
             Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_LONG)
                 .show()
             normal()
@@ -142,18 +145,18 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
     }
 
     fun getSignupInfo(id: String): HashMap<String, Any> {
-        val list:List<String> = arrayListOf()
+        val list: List<String> = arrayListOf()
         val user = HashMap<String, Any>()
-        user["name"] = name
+        user["name"] = name!!
         user["id"] = id
-        user["mail"] = mail
-        user["address"] = adress
-        user["phone"] = phone
-        user["password"] = password
-        user["fav"]=list
-        user["cart"]=list
+        user["mail"] = mail!!
+        user["address"] = adress!!
+        user["phone"] = phone!!
+        user["password"] = password!!
+        user["fav"] = list
+        user["cart"] = list
 
-        auth.currentUser!!.getIdToken(true).addOnCompleteListener {
+        auth?.currentUser!!.getIdToken(true).addOnCompleteListener {
             token = it.result!!.token
         }
         user["token"] = token!!
@@ -161,7 +164,7 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
     }
 
     fun addtoDB(data: HashMap<String, Any>) {
-        db.collection("users").document(userId).set(data).addOnCompleteListener {
+        db?.collection("users")?.document(userId!!)?.set(data)?.addOnCompleteListener {
             if (it.isSuccessful) {
                 gotoHome()
 
