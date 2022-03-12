@@ -20,7 +20,7 @@ import com.google.firebase.firestore.*
 
 class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expandInterface,
     SearchView.OnQueryTextListener {
-    lateinit var _binding: HomeFragmentBinding
+    private lateinit var _binding: HomeFragmentBinding
     private val binding get() = _binding
     private lateinit var recyclerView: RecyclerView
     private var adapter: HomeRecycleAdapter? = null
@@ -49,12 +49,6 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.top_menue, menu)
-        val search = menu.findItem(R.id.app_bar_search)
-        val SearchView = search.actionView as SearchView
-        SearchView.setOnQueryTextListener(this)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,7 +76,8 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
         itemsList = arrayListOf()
         itemsList.clear()
         getItemsFromFirebase()
-
+        val search = requireActivity().findViewById<SearchView>(R.id.app_bar_search)
+        search.setOnQueryTextListener(this)
 
 
     }
@@ -260,6 +255,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
     override fun onQueryTextChange(p0: String?): Boolean {
+        println(p0)
         filterFun(p0.toString().lowercase())
         return true
     }

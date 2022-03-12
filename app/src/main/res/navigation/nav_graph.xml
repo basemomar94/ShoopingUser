@@ -71,6 +71,12 @@
         <action
             android:id="@+id/action_account_to_Favorite"
             app:destination="@id/Cart" />
+        <action
+            android:id="@+id/action_account_to_Favorite2"
+            app:destination="@id/Favorite" />
+        <action
+            android:id="@+id/action_account_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
     </fragment>
     <fragment
         android:id="@+id/ordersList"
@@ -90,4 +96,8 @@
             android:id="@+id/action_tracking_to_expandView"
             app:destination="@id/expandView" />
     </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.bassem.shoopinguser.ui.main_ui.profile.aboutFragment"
+        android:label="aboutFragment" />
 </navigation>

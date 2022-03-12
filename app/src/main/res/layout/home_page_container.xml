@@ -21,7 +21,7 @@
 
             <com.smarteist.autoimageslider.SliderView
                 android:id="@+id/homeSlider"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="200dp"
                 app:sliderAutoCycleDirection="back_and_forth"
                 app:sliderAutoCycleEnabled="true"
@@ -29,8 +29,21 @@
                 app:sliderIndicatorSelectedColor="@color/orange"
                 app:sliderScrollTimeInSec="2">
 
+
             </com.smarteist.autoimageslider.SliderView>
+
         </androidx.appcompat.widget.Toolbar>
+
+
+        <SearchView
+            android:id="@+id/app_bar_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+
+            app:layout_scrollFlags="scroll|enterAlways">
+
+        </SearchView>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
@@ -40,11 +53,12 @@
 
             app:tabMode="fixed" />
 
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/homePager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

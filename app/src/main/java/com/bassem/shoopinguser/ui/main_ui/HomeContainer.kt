@@ -24,7 +24,6 @@ class HomeContainer : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
-        supportActionBar!!.title = ""
         bottomNavigationView = findViewById(R.id.bottomAppBar)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

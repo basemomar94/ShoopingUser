@@ -1,6 +1,7 @@
 package com.bassem.shoopinguser.ui.main_ui.profile
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +15,9 @@ import com.bassem.shoopinguser.ui.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class AccountFragment : Fragment(R.layout.account_fragment) {
-    var _binding: AccountFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var auth: FirebaseAuth
+    private var _binding: AccountFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var auth: FirebaseAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,11 +42,32 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         binding!!.logOut.setOnClickListener {
             logOut()
         }
+
+        binding!!.wishing.setOnClickListener {
+            findNavController().navigate(R.id.action_account_to_Favorite2)
+        }
+        binding!!.support.setOnClickListener {
+            val mobile = "1150095072"
+            val uri = Uri.parse("https://api.whatsapp.com/send?phone=+20$mobile")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            requireContext().startActivity(intent)
+
+        }
+        binding!!.share.setOnClickListener {
+            val sendIntent = Intent()
+            sendIntent.action = Intent.ACTION_SEND
+            sendIntent.putExtra(
+                Intent.EXTRA_TEXT,
+                "Hey Check out this Great app:"
+            )
+            sendIntent.type = "text/plain"
+            startActivity(sendIntent)
+        }
+        binding!!.info.setOnClickListener {
+            findNavController().navigate(R.id.action_account_to_aboutFragment)
+        }
     }
 
-    override fun onDetach() {
-        super.onDetach()
-    }
 
     fun logOut() {
         loading()
