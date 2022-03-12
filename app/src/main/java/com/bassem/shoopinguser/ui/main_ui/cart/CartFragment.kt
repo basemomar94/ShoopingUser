@@ -1,6 +1,7 @@
 package com.bassem.shoopinguser.ui.main_ui.cart
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.bassem.shoopinguser.adapters.CartRecycleAdapter
 import com.bassem.shoopinguser.databinding.CartFragmentBinding
 import com.bassem.shoopinguser.models.CartClass
 import com.bassem.shoopinguser.models.CouponsClass
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +43,8 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     private val dilveryFees = 25
     private var discount: Int = 0
     private lateinit var token: String
+    lateinit var bottomNavigationView: BottomNavigationView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +67,26 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         return binding!!.root
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        bottomNavigationView.visibility = View.VISIBLE
+        Log.d("Check","onDetach")
+
+
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        bottomNavigationView.visibility = View.VISIBLE
+        Log.d("Check","onDestroy")
+
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bottomNavigationView = requireActivity().findViewById(R.id.bottomAppBar)
+        bottomNavigationView.visibility = View.GONE
 
 
         RecycleSetup()

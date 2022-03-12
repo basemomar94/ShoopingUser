@@ -19,7 +19,8 @@
         android:id="@+id/cartFullLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/cartscroll"
@@ -246,7 +247,8 @@
                     android:layout_height="52dp"
                     android:layout_alignParentBottom="true"
                     android:background="@drawable/expan"
-                    android:text="Order Now" />
+                    android:text="Order Now"
+                    android:visibility="visible" />
 
                 <ProgressBar
                     android:id="@+id/progressBar3"
