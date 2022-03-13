@@ -13,5 +13,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/orange</item>
+
+
     </style>
 </resources>

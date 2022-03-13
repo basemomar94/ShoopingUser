@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,7 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     private var discount: Int = 0
     private lateinit var token: String
     lateinit var bottomNavigationView: BottomNavigationView
+    private var orderID: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,9 +101,9 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         }
 
         binding!!.checkOut.setOnClickListener {
-            val orderID = UUID.randomUUID().toString()
+            orderID = UUID.randomUUID().toString()
 
-            placeOrder(getOrderDetails(orderID), orderID)
+            placeOrder(getOrderDetails(orderID!!), orderID!!)
         }
 
 
@@ -205,9 +207,6 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
                                     updatePrice()
 
 
-
-
-
                                 } else {
                                     detleteAllcart()
                                 }
@@ -309,6 +308,7 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         db.collection("orders").document(orderId).set(data).addOnCompleteListener {
             if (it.isSuccessful) {
                 clearCart()
+
             } else {
                 normal()
             }
@@ -316,12 +316,12 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     }
 
 
-    fun loading() {
+    private fun loading() {
         binding!!.checkOut.visibility = View.GONE
         binding!!.progressBar3.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.checkOut.visibility = View.VISIBLE
         binding!!.progressBar3.visibility = View.GONE
     }
@@ -351,7 +351,10 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         }
         val track = dialog.findViewById<Button>(R.id.trackSheet)
         track!!.setOnClickListener {
-            findNavController().navigate(R.id.action_cartListClass_to_ordersList)
+            val bundle = Bundle()
+            bundle.putString("order", orderID)
+            val navHost = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+            navHost.navigate(R.id.action_Cart_to_tracking, bundle)
             dialog.dismiss()
 
         }

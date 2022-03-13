@@ -86,7 +86,7 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
 
     fun errorEmpty(text: String, layout: TextInputLayout) {
         if (text.isEmpty()) {
-            layout.error = "this field can't be empty"
+            layout.error = "* required"
 
         } else {
             layout.isErrorEnabled = false

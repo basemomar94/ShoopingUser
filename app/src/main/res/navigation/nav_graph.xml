@@ -44,6 +44,9 @@
         <action
             android:id="@+id/action_cartListClass_to_ordersList"
             app:destination="@id/ordersList" />
+        <action
+            android:id="@+id/action_Cart_to_tracking"
+            app:destination="@id/tracking" />
     </fragment>
     <fragment
         android:id="@+id/Favorite"
