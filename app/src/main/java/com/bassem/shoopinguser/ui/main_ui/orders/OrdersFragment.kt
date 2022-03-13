@@ -43,6 +43,12 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        bottomNavigationView.visibility = View.VISIBLE
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

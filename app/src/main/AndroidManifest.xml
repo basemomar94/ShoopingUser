@@ -12,13 +12,14 @@
         android:theme="@style/Theme.ShoopingUser">
         <activity
             android:name=".ui.main_ui.HomeContainer"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ui.welcome.WelcomeClass"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".ui.welcome.Splash"
             android:exported="true">
@@ -31,7 +32,6 @@
 
 
     </application>
-
 
 
 </manifest>

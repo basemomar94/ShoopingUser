@@ -193,9 +193,7 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
                 cartListIds = it.result!!.get("cart")
                 if (cartListIds != null) {
                     if ((cartListIds as List<*>).isEmpty()) {
-                        requireActivity().runOnUiThread {
-                            hideEmptycart()
-                        }
+                        hideEmptycart()
                     } else {
                         var i = 0
                         for (item in cartListIds as List<String>) {
