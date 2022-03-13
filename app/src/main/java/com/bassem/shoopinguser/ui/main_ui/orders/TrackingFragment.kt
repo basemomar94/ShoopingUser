@@ -1,6 +1,7 @@
 package com.bassem.shoopinguser.ui.main_ui.orders
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +17,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.kofigyan.stateprogressbar.StateProgressBar
 
 class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapter.orderInterFace {
-    var _binding: TrackingFragmentBinding? = null
-    val binding get() = _binding
-    lateinit var recyclerView: RecyclerView
-    lateinit var orderedList: MutableList<OrderedItem>
-    lateinit var orderedAdapter: OrderedItemsAdapter
-    lateinit var countList: MutableList<String>
-    lateinit var db: FirebaseFirestore
-    var orderID: String? = null
+    private var _binding: TrackingFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var orderedList: MutableList<OrderedItem>
+    private lateinit var orderedAdapter: OrderedItemsAdapter
+    private lateinit var countList: MutableList<String>
+    private lateinit var db: FirebaseFirestore
+    private var orderID: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         orderedList = arrayListOf()
@@ -60,7 +61,7 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
 
     }
 
-    fun tracking(status: String) {
+    private fun tracking(status: String) {
         val track = binding!!.trackingBar
         track.apply {
             stateDescriptionData.add(0, "Pending")
@@ -99,7 +100,7 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
 
     }
 
-    fun recycleSetup() {
+    private fun recycleSetup() {
         recyclerView = binding!!.trackingRV
         orderedAdapter = OrderedItemsAdapter(orderedList, requireContext(), countList, this)
         recyclerView.apply {
@@ -109,16 +110,19 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
         }
     }
 
-    fun gettingItems() {
+    private fun gettingItems() {
         db = FirebaseFirestore.getInstance()
         db.collection("orders").document(orderID!!).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val total = it.result!!.get("cost")
                 val subtotal = it.result!!.get("subcost")
                 val discount = it.result!!.get("discount")
-                println(discount)
+                Log.d("discount", (discount == null).toString())
                 if (discount == null) {
                     binding!!.discountLayout.visibility = View.GONE
+                } else {
+                    binding!!.discount.text = "-$discount EGP"
+
                 }
                 val shipping = it.result!!.get("delivery")
                 val status = it.result!!.get("status")
@@ -136,7 +140,6 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
                 tracking(status.toString())
                 binding!!.orderstatus.text = status.toString()
                 binding!!.total.text = total.toString() + " EGP"
-                binding!!.discount.text = "-$discount EGP"
                 binding!!.subTotal.text = "$subtotal EGP"
                 binding!!.shipping.text = "$shipping EGP"
                 binding!!.trackName.text = name.toString()
@@ -179,7 +182,7 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
 
     }
 
-    fun cancelOrder() {
+    private fun cancelOrder() {
         cancelloading()
         db.collection("orders").document(orderID!!).update("status", "canceled")
             .addOnCompleteListener {
@@ -197,12 +200,12 @@ class TrackingFragment : Fragment(R.layout.tracking_fragment), OrderedItemsAdapt
     }
 
 
-    fun cancelloading() {
+    private fun cancelloading() {
         binding!!.cancelOrder.visibility = View.GONE
         binding!!.cancelspinner.visibility = View.VISIBLE
     }
 
-    fun normalcancel() {
+    private fun normalcancel() {
         binding!!.cancelOrder.visibility = View.VISIBLE
         binding!!.cancelspinner.visibility = View.GONE
     }

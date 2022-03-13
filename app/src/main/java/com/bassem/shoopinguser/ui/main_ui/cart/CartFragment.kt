@@ -46,7 +46,6 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     lateinit var bottomNavigationView: BottomNavigationView
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -70,7 +69,7 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     override fun onDetach() {
         super.onDetach()
         bottomNavigationView.visibility = View.VISIBLE
-        Log.d("Check","onDetach")
+        Log.d("Check", "onDetach")
 
 
     }
@@ -79,7 +78,7 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
     override fun onDestroy() {
         super.onDestroy()
         bottomNavigationView.visibility = View.VISIBLE
-        Log.d("Check","onDestroy")
+        Log.d("Check", "onDestroy")
 
     }
 
@@ -201,20 +200,23 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
                                 val item = it.toObject(CartClass::class.java)
                                 if (item != null) {
                                     cartListList!!.add(item)
+                                    cartListList?.let { it1 -> println(it1.size) }
+                                    cartAdapter!!.notifyDataSetChanged()
+                                    updatePrice()
+
+
+
+
 
                                 } else {
                                     detleteAllcart()
                                 }
-                                cartAdapter!!.notifyDataSetChanged()
-                                i++
-                                if (i == (cartListIds as List<*>).size) {
-                                    updatePrice()
-                                    showCart()
-                                }
 
 
                             }
+
                         }
+                        showCart()
 
                     }
                 } else {
@@ -278,7 +280,14 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         orderHashMap["items"] = cartListIds as List<String>
         orderHashMap["cost"] = binding!!.totalCart.text.toString()
         orderHashMap["subcost"] = binding!!.subtotal.text.toString()
-        orderHashMap["discount"] = binding!!.discountValue.text.toString()
+        val discountValue = binding!!.discountValue.text
+        val discount = 0
+        if (discountValue.isNullOrEmpty()) {
+            orderHashMap["discount"] = discount.toString()
+        } else {
+            orderHashMap["discount"] = discountValue.toString()
+        }
+
         orderHashMap["delivery"] = binding!!.delivery.text.toString()
         orderHashMap["status"] = "pending"
         orderHashMap["order_date"] = FieldValue.serverTimestamp()
