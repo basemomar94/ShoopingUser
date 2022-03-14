@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.main_ui.expandview
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.ExpandFragmentBinding
+import com.bassem.shoopinguser.ui.main_ui.HomeContainer
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -19,14 +21,16 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
-    private  var _binding: ExpandFragmentBinding? = null
-    private   val binding get() = _binding
-    private  lateinit var bottomNavigationView: BottomNavigationView
-    private   lateinit var db: FirebaseFirestore
-    private  lateinit var documentID: String
-    private   lateinit var userID: String
-    private  lateinit var itemID: String
-    private  lateinit var auth: FirebaseAuth
+    private var _binding: ExpandFragmentBinding? = null
+    private val binding get() = _binding
+    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var db: FirebaseFirestore
+    private lateinit var documentID: String
+    private lateinit var userID: String
+    private lateinit var itemID: String
+    private lateinit var auth: FirebaseAuth
+    var isFav = false
+    val green = R.color.greenPrimary
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +43,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         auth = FirebaseAuth.getInstance()
         userID = auth.currentUser!!.uid
         println("IT is user $userID")
+        db = FirebaseFirestore.getInstance()
 
 
     }
@@ -58,6 +63,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         bottomNavigationView.visibility = View.GONE
 
         gettingData()
+        checkifFav()
         //listners
         binding!!.cartExpand.setOnClickListener {
             if (documentID != "fail") {
@@ -67,9 +73,16 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         binding!!.checkCart.setOnClickListener {
             findNavController().navigate(R.id.action_expandView_to_cartListClass)
         }
-        binding!!.favExpand.setOnClickListener {
+        binding!!.favExpandcard.setOnClickListener {
             if (documentID != "fail") {
-                addtoFavorite(documentID)
+                if (isFav) {
+
+                    removeFavorite(documentID)
+
+                } else {
+                    addtoFavorite(documentID)
+
+                }
             }
         }
 
@@ -89,7 +102,6 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
     }
 
     private fun gettingData() {
-        db = FirebaseFirestore.getInstance()
         db.collection("items").document(documentID).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 val imageUrl = it.result!!.getString("photo")
@@ -142,15 +154,22 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
     }
 
     private fun addtoFavorite(id: String) {
-        db = FirebaseFirestore.getInstance()
         db.collection("users").document(userID).update("fav", FieldValue.arrayUnion(id))
             .addOnCompleteListener {
-                val favorite =
-                    AppCompatResources.getDrawable(requireContext(), R.drawable.favoritered)
-                binding!!.favImg.setImageDrawable(favorite)
+
+                isFav = true
 
             }
+        makeFavUi()
 
+    }
+
+    private fun removeFavorite(id: String) {
+        db.collection("users").document(userID).update("fav", FieldValue.arrayRemove(id))
+            .addOnCompleteListener {
+                isFav = false
+            }
+        removeFavUi()
     }
 
     private fun itemAvaliable() {
@@ -164,9 +183,34 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment) {
         binding!!.soldView.visibility = View.VISIBLE
         binding!!.expandLayout.alpha = .5F
         binding!!.cartExpand.isClickable = false
-        binding!!.favExpand.isClickable = false
     }
 
+    private fun makeFavUi() {
+        val favorite = AppCompatResources.getDrawable(requireContext(), R.drawable.favoritered)
+        binding!!.favImg.setImageDrawable(favorite)
+        binding!!.favExpandcard.setBackgroundColor(Color.DKGRAY)
+    }
+
+    private fun removeFavUi() {
+        val favorite = AppCompatResources.getDrawable(
+            requireContext(),
+            R.drawable.ic_baseline_favorite_border_24
+        )
+        binding!!.favImg.setImageDrawable(favorite)
+        binding!!.favExpandcard.setBackgroundColor(Color.WHITE)
+    }
+
+    private fun checkifFav() {
+        db.collection("users").document(userID).get().addOnCompleteListener {
+            val fav = it.result?.get("fav") as List<String>
+            fav.forEach {
+                if (it == documentID) {
+                    makeFavUi()
+                    isFav = true
+                }
+            }
+        }
+    }
 
 
 }

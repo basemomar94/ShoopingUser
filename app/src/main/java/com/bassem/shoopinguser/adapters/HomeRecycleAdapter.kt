@@ -2,11 +2,13 @@ package com.bassem.shoopinguser.adapters
 
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -62,6 +64,7 @@ class HomeRecycleAdapter(
         return ViewHolder(v)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = itemsList[position]
         val itemPostien = position
@@ -71,18 +74,20 @@ class HomeRecycleAdapter(
         val unfavorite = getDrawable(context, R.drawable.ic_baseline_favorite_border_24)
         val addcart = getDrawable(context, R.drawable.ic_baseline_add_shopping_cart_24)
         val incart = getDrawable(context, R.drawable.addedcart)
+        val green = R.color.greenPrimary
+
 
         if (item.favorite) {
-            holder.favCard.setCardBackgroundColor(Color.parseColor("#FFA56D"))
-           holder.favorite.setImageDrawable(favorite)
+            holder.favCard.setCardBackgroundColor(context.getColorStateList(green))
+            holder.favorite.setImageDrawable(favorite)
         } else {
-           holder.favorite.setImageDrawable(unfavorite)
+            holder.favorite.setImageDrawable(unfavorite)
             holder.favCard.setCardBackgroundColor(Color.WHITE)
 
 
         }
         if (item.cart) {
-            holder.cartCard.setCardBackgroundColor(Color.parseColor("#FFA56D"))
+            holder.cartCard.setCardBackgroundColor(context.getColorStateList(green))
             holder.cartImag.setImageDrawable(incart)
         } else {
             holder.cartCard.setCardBackgroundColor(Color.WHITE)

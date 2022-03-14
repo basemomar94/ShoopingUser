@@ -7,11 +7,16 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    #388F3C
 
     //my colors
-    <color name="orange">#FFA56D</color>
+    <color name="greenPrimary">#388F3C</color>
     <color name="gray">#B7B7B7</color>
     <color name="lightgray">#F4F1ED</color>
+    <color name="green">#388F3C</color>
+    <color name="secondary">#f1e3c5</color>
+
+
 
 
 

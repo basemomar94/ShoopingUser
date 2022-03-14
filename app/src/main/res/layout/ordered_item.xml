@@ -16,7 +16,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:layout_margin="4dp"
-            app:cardBackgroundColor="@color/orange"
+            app:cardBackgroundColor="@color/greenPrimary"
             app:cardCornerRadius="50dp">
 
             <TextView
@@ -57,7 +57,7 @@
                 android:layout_margin="4dp"
                 android:text="TextView"
                 android:textAlignment="viewStart"
-                android:textColor="@color/orange"
+                android:textColor="@color/greenPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

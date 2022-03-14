@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_vertical"
-            android:indeterminateTint="@color/orange" />
+            android:indeterminateTint="@color/greenPrimary" />
     </FrameLayout>
 
     <LinearLayout
@@ -32,13 +32,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            app:spb_currentStateDescriptionColor="@color/orange"
+            app:spb_currentStateDescriptionColor="@color/greenPrimary"
             app:spb_currentStateNumber="two"
             app:spb_enableAllStatesCompleted="false"
             app:spb_maxStateNumber="four"
             app:spb_stateBackgroundColor="@color/gray"
             app:spb_stateDescriptionColor="@color/gray"
-            app:spb_stateForegroundColor="@color/orange"
+            app:spb_stateForegroundColor="@color/greenPrimary"
             app:spb_stateNumberForegroundColor="@color/white">
 
         </com.kofigyan.stateprogressbar.StateProgressBar>
@@ -273,7 +273,7 @@
                 android:layout_margin="8dp"
                 android:layout_weight="1"
                 android:text="Order Status"
-                android:textColor="@color/orange"
+                android:textColor="@color/greenPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -303,7 +303,7 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:indeterminateTint="@color/orange"
+                android:indeterminateTint="@color/greenPrimary"
                 android:visibility="gone" />
         </LinearLayout>
 

@@ -49,7 +49,6 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,9 +74,17 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
         itemsList = arrayListOf()
         itemsList.clear()
-        getItemsFromFirebase()
+
         val search = requireActivity().findViewById<SearchView>(R.id.app_bar_search)
         search.setOnQueryTextListener(this)
+        when (key) {
+            "novel" -> getItemsFromFirebase("category", key!!)
+            "book" -> getItemsFromFirebase("category", key!!)
+            "children" -> getItemsFromFirebase("category", key!!)
+            "trend" -> getItemsFromFirebase("trend", true)
+
+
+        }
 
 
     }
@@ -139,59 +146,32 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
 
-    private fun getItemsFromFirebase() {
-        if (key == "all") {
-            db.collection("items").whereEqualTo("visible", true).get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        var i = 0
-                        for (dc: DocumentChange in it.result!!.documentChanges) {
-                            if (dc.type == DocumentChange.Type.ADDED) {
-                                itemsList.add(dc.document.toObject(ItemsClass::class.java))
-                            }
-                            i++
-
-
-                            if (i == itemsList.size) {
-                                binding.trendingRv.visibility = View.VISIBLE
-                                binding.shimmerLayout.visibility = View.GONE
-                                getFavCounter()
-                                getCartCounter()
-
-                            }
-
-
-                        }
-                        recycleSetup()
-                    }
-                }
-        } else {
-            db.collection("items").whereEqualTo("visible", true).whereEqualTo("category", key).get()
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        var i = 0
-                        for (dc: DocumentChange in it.result!!.documentChanges) {
-                            if (dc.type == DocumentChange.Type.ADDED) {
-                                itemsList.add(dc.document.toObject(ItemsClass::class.java))
+    private fun getItemsFromFirebase(where: String, value: Any) {
+        db.collection("items").whereEqualTo(where, value).get()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    var i = 0
+                    for (dc: DocumentChange in it.result!!.documentChanges) {
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            itemsList.add(dc.document.toObject(ItemsClass::class.java))
 //                        adapter.notifyItemInserted(i)
-                            }
-                            i++
+                        }
+                        i++
 
 
-                            if (i == itemsList.size) {
-                                binding.trendingRv.visibility = View.VISIBLE
-                                binding.shimmerLayout.visibility = View.GONE
-                                getFavCounter()
-                                getCartCounter()
-
-                            }
-
+                        if (i == itemsList.size) {
+                            binding.trendingRv.visibility = View.VISIBLE
+                            binding.shimmerLayout.visibility = View.GONE
+                            getFavCounter()
+                            getCartCounter()
 
                         }
-                        recycleSetup()
+
+
                     }
+                    recycleSetup()
                 }
-        }
+            }
 
 
     }

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_vertical"
-            android:indeterminateTint="@color/orange" />
+            android:indeterminateTint="@color/greenPrimary" />
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -45,7 +45,7 @@
             android:layout_margin="8dp"
             android:text="You haven't ordered yet!"
             android:textAlignment="center"
-            android:textColor="@color/orange"
+            android:textColor="@color/greenPrimary"
             android:textSize="16sp" />
 
         <Button

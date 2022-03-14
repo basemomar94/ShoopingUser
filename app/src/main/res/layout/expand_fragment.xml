@@ -8,22 +8,31 @@
     android:orientation="vertical"
     tools:context=".ui.main_ui.expandview.ExpandViewFragment">
 
+    <FrameLayout
+        android:id="@+id/progressBar5"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/greenPrimary" />
+    </FrameLayout>
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/expandLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/progressBar5"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminateTint="@color/orange" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -31,7 +40,6 @@
                 android:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/expandLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
@@ -51,7 +59,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="Blouse new brand"
-                        android:textColor="@color/orange"
+                        android:textColor="@color/greenPrimary"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -72,6 +80,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginBottom="8dp"
                         android:text="It is a very sexy red nightdress"
                         android:textColor="@color/black"
@@ -81,105 +90,28 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal" >
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:orientation="vertical">
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="8dp"
+                            android:text="Author"
+                            android:textColor="@color/greenPrimary"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:text="Color"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <com.google.android.material.chip.ChipGroup
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                app:singleLine="false">
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chip4"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    app:chipBackgroundColor="@android:color/holo_green_dark" />
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chip5"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    app:chipBackgroundColor="@color/teal_200" />
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chip6"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    app:chipBackgroundColor="@android:color/holo_red_dark" />
-                            </com.google.android.material.chip.ChipGroup>
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <TextView
+                            android:id="@+id/textView18"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/textView7"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="16dp"
-                                android:text="Size"
-                                android:textColor="@color/black"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                            <com.google.android.material.chip.ChipGroup
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                app:singleLine="true">
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/cheip4"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:includeFontPadding="false"
-                                    android:text="X"
-                                    android:textSize="10sp"
-                                    app:chipBackgroundColor="@color/gray"
-                                    app:chipStartPadding="2dp" />
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chiep5"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="XL"
-                                    android:textSize="10sp"
-                                    app:chipBackgroundColor="@color/gray" />
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chiep6"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="XXL"
-                                    android:textSize="10sp"
-                                    app:chipBackgroundColor="@color/gray" />
-
-                                <com.google.android.material.chip.Chip
-                                    android:id="@+id/chiep"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="XXL"
-                                    android:textSize="10sp"
-                                    app:chipBackgroundColor="@color/gray" />
-                            </com.google.android.material.chip.ChipGroup>
-
-                        </LinearLayout>
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="8dp"
+                            android:text="Author"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -204,12 +136,12 @@
         android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/favExpand"
+            android:id="@+id/favExpandcard"
             android:layout_width="48dp"
             android:layout_height="52dp"
             android:layout_gravity="center"
-            android:background="@color/gray"
-            app:cardBackgroundColor="@color/gray">
+            android:background="@color/white"
+            app:cardBackgroundColor="@color/white">
 
             <ImageView
                 android:id="@+id/favImg"

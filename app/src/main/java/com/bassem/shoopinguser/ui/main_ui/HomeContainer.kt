@@ -16,6 +16,8 @@ class HomeContainer : AppCompatActivity() {
     lateinit var auth: FirebaseAuth
     lateinit var userID: String
     lateinit var bottomNavigationView: BottomNavigationView
+    val green = "#388F3C"
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +48,7 @@ class HomeContainer : AppCompatActivity() {
                     val favCount = (favList).size
                     println(favCount)
                     bottomNavigationView.getOrCreateBadge(R.id.Favorite).apply {
-                        badgeTextColor = Color.DKGRAY
+                        badgeTextColor = Color.WHITE
                         if (favCount == 0) {
                             backgroundColor = Color.parseColor("#FFFFFF")
                             clearNumber()
@@ -54,7 +56,7 @@ class HomeContainer : AppCompatActivity() {
 
                         } else {
                             number = favCount
-                            backgroundColor = Color.parseColor("#FFA56D")
+                            backgroundColor = Color.parseColor(green)
 
 
                         }
@@ -76,7 +78,7 @@ class HomeContainer : AppCompatActivity() {
                         val cartCount = (cartList).size
                         println(cartCount)
                         bottomNavigationView.getOrCreateBadge(R.id.Cart).apply {
-                            badgeTextColor = Color.DKGRAY
+                            badgeTextColor = Color.WHITE
                             if (cartCount == 0) {
                                 backgroundColor = Color.parseColor("#FFFFFF")
                                 clearNumber()
@@ -84,7 +86,7 @@ class HomeContainer : AppCompatActivity() {
 
                             } else {
                                 number = cartCount
-                                backgroundColor = Color.parseColor("#FFA56D")
+                                backgroundColor = Color.parseColor(green)
 
 
                             }

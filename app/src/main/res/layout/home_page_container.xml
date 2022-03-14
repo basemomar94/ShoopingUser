@@ -26,7 +26,7 @@
                 app:sliderAutoCycleDirection="back_and_forth"
                 app:sliderAutoCycleEnabled="true"
                 app:sliderIndicatorGravity="bottom|center_horizontal"
-                app:sliderIndicatorSelectedColor="@color/orange"
+                app:sliderIndicatorSelectedColor="@color/greenPrimary"
                 app:sliderScrollTimeInSec="2">
 
 

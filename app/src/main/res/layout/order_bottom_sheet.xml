@@ -20,7 +20,7 @@
         android:layout_margin="8dp"
         android:text="Item has been added to Cart"
         android:textAlignment="center"
-        android:textColor="@color/orange"
+        android:textColor="@color/greenPrimary"
         android:textSize="20sp" />
 
     <Button

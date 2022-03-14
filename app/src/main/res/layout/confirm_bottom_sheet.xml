@@ -23,7 +23,7 @@
             android:layout_margin="8dp"
             android:text="You'll get your oder soon!"
             android:textAlignment="center"
-            android:textColor="@color/orange"
+            android:textColor="@color/greenPrimary"
             android:textSize="20sp" />
 
         <Button

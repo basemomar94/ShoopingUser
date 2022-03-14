@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_vertical"
-            android:indeterminateTint="@color/orange" />
+            android:indeterminateTint="@color/greenPrimary" />
     </FrameLayout>
 
     <RelativeLayout
@@ -116,7 +116,7 @@
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:layout_margin="4dp"
-                            android:indeterminateTint="@color/orange"
+                            android:indeterminateTint="@color/greenPrimary"
                             android:visibility="gone" />
 
                     </LinearLayout>
@@ -260,7 +260,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:indeterminateTint="@color/orange"
+                    android:indeterminateTint="@color/greenPrimary"
                     android:visibility="gone" />
 
             </RelativeLayout>
@@ -288,7 +288,7 @@
             android:lineSpacingExtra="24sp"
             android:text="Your cart is empty!"
             android:textAlignment="center"
-            android:textColor="@color/orange"
+            android:textColor="@color/greenPrimary"
             android:textSize="20sp"
             android:textStyle="bold" />
 
