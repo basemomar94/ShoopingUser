@@ -24,7 +24,7 @@ class HomePageContainer : Fragment(R.layout.home_page_container) {
     lateinit var homeslider: SliderView
     lateinit var sliderHomeAdapter: HomeSliderAdapter
     lateinit var tab: TabLayout
-    val tabtitles = arrayOf("Trending", "Books", "Novels","Children")
+    val tabtitles = arrayOf("Home", "Books", "Novels","Children")
     var imageList = listOf<Int>(
         R.drawable.welcome1,
         R.drawable.welcome2,
