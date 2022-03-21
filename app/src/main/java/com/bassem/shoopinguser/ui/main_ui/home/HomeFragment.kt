@@ -120,15 +120,19 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     }
 
-    private fun goToView(documentid: String) {
+    private fun goToView(documentid: String, category: String,position: Int) {
         val bundle = Bundle()
+        val item = itemsList[position]
         bundle.putString("document", documentid)
+        bundle.putString("category", category)
+
+
         val navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
         navController.navigate(R.id.action_homeClass_to_expandView, bundle)
     }
 
-    override fun viewItem(item: String) {
-        goToView(item)
+    override fun viewItem(item: String, category: String, position: Int) {
+        goToView(item, category,position)
     }
 
     override fun addCart(id: String, position: Int, item: ItemsClass) {

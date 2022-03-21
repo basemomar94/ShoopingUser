@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bassem.shoopinguser.R
@@ -343,8 +344,8 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
         val v = layoutInflater.inflate(R.layout.confirm_bottom_sheet, null)
         dialog.setContentView(v)
         dialog.dismissWithAnimation = true
-        val contine = dialog.findViewById<Button>(R.id.continueSheet)
-        contine!!.setOnClickListener {
+        val `continue` = dialog.findViewById<Button>(R.id.continueSheet)
+        `continue`!!.setOnClickListener {
             findNavController().navigate(R.id.action_cartListClass_to_Home)
             dialog.dismiss()
 
@@ -445,6 +446,25 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
             alpha = .5F
         }
         binding!!.promoLayout.isEnabled = false
+    }
+
+    private fun onSwipedDelete() {
+        val itemTouchHelperCallback =
+            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.adapterPosition
+
+                }
+
+            }
     }
 
 

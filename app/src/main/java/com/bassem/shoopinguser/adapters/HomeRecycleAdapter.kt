@@ -44,7 +44,8 @@ class HomeRecycleAdapter(
             itemview.setOnClickListener {
                 val position = adapterPosition
                 val item = itemsList[position].id
-                expandListner.viewItem(item!!)
+                val category = itemsList[position].category
+                expandListner.viewItem(item!!, category!!, position)
             }
             cartCard.setOnClickListener {
                 val position = adapterPosition
@@ -114,7 +115,7 @@ class HomeRecycleAdapter(
 
     interface expandInterface {
         fun makeFavorite(id: String, position: Int, fav: Boolean, item: ItemsClass)
-        fun viewItem(item: String)
+        fun viewItem(item: String, category: String, position: Int)
         fun addCart(id: String, position: Int, item: ItemsClass)
 
 
