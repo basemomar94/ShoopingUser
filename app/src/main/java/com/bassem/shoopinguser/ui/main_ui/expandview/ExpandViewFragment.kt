@@ -80,7 +80,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment), SimilarAdapter.ex
 
         gettingData(documentID)
         checkifFav()
-        getSimilarItems(catogery,documentID)
+        getSimilarItems(catogery, documentID)
         recycleSetup(similarList!!)
         //listners
         binding!!.cartExpand.setOnClickListener {
@@ -244,9 +244,10 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment), SimilarAdapter.ex
     }
 
 
-    private fun getSimilarItems(catego: String,currentID:String) {
+    private fun getSimilarItems(catego: String, currentID: String) {
         db.collection("items").whereEqualTo("category", catego).get().addOnCompleteListener {
             if (it.isSuccessful) {
+                similarList?.clear()
                 for (dc in it.result!!.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val similarItem = dc.document.toObject(ItemsClass::class.java)
@@ -264,10 +265,9 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment), SimilarAdapter.ex
 
 
     override fun viewItem(item: String, category: String) {
+        documentID = item
         gettingData(item)
-        similarList?.clear()
-        getSimilarItems(category,item)
-
+        getSimilarItems(category, item)
 
 
     }

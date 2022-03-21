@@ -206,6 +206,10 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
                                     cartListList?.let { it1 -> println(it1.size) }
                                     cartAdapter!!.notifyDataSetChanged()
                                     updatePrice()
+                                    i++
+                                    if (i == cartListList!!.size) {
+                                        showCart()
+                                    }
 
 
                                 } else {
@@ -216,11 +220,10 @@ class CartFragment : Fragment(R.layout.cart_fragment), CartRecycleAdapter.remove
                             }
 
                         }
-                        showCart()
 
                     }
                 } else {
-                    hideEmptycart()
+                      hideEmptycart()
                 }
 
 

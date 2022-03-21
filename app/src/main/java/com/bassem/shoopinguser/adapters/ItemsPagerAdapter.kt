@@ -25,7 +25,7 @@ class ItemsPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) 
             }
             1 -> {
                 val args = Bundle()
-                args.putString("key", "novel")
+                args.putString("key", "book")
                 home.arguments = args
 
                 return home
@@ -33,7 +33,7 @@ class ItemsPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) 
 
             2 -> {
                 val args = Bundle()
-                args.putString("key", "children")
+                args.putString("key", "novel")
                 home.arguments = args
                 return home
             }
