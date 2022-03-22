@@ -120,7 +120,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     }
 
-    private fun goToView(documentid: String, category: String,position: Int) {
+    private fun goToView(documentid: String, category: String, position: Int) {
         val bundle = Bundle()
         val item = itemsList[position]
         bundle.putString("document", documentid)
@@ -132,7 +132,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     }
 
     override fun viewItem(item: String, category: String, position: Int) {
-        goToView(item, category,position)
+        goToView(item, category, position)
     }
 
     override fun addCart(id: String, position: Int, item: ItemsClass) {
@@ -275,6 +275,29 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
                 if (it.isSuccessful) {
                 }
             }
+
+
+    }
+
+    fun twoSum(nums: IntArray, target: Int): IntArray {
+        var sum = 0
+        var answer: IntArray = IntArray(2)
+        nums.forEachIndexed { index, i ->
+            for (r in 0..nums.size) {
+                sum = i + nums[r]
+                if (sum == target) {
+                    var position = 0
+                    answer[position] = i
+                    position++
+
+                }
+
+
+            }
+
+
+        }
+        return answer
 
 
     }

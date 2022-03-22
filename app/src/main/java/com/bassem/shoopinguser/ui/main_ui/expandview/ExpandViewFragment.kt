@@ -245,7 +245,7 @@ class ExpandViewFragment : Fragment(R.layout.expand_fragment), SimilarAdapter.ex
 
 
     private fun getSimilarItems(catego: String, currentID: String) {
-        db.collection("items").whereEqualTo("category", catego).get().addOnCompleteListener {
+        db.collection("items").whereEqualTo("category", catego).limit(10).get().addOnCompleteListener {
             if (it.isSuccessful) {
                 similarList?.clear()
                 for (dc in it.result!!.documentChanges) {

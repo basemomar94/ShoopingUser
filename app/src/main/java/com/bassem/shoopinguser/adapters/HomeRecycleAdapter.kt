@@ -101,7 +101,9 @@ class HomeRecycleAdapter(
         }
 
         val url = item.photo
-        Glide.with(context).load(url).into(holder.image)
+        Glide.with(context).load(url)
+            .placeholder(R.drawable.picture).into(holder.image)
+
     }
 
     override fun getItemCount(): Int {
