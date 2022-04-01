@@ -66,6 +66,10 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
         binding!!.info.setOnClickListener {
             findNavController().navigate(R.id.action_account_to_aboutFragment)
         }
+        binding!!.myinfoLayout.setOnClickListener {
+            findNavController().navigate(R.id.action_account_to_yourinfoFragment)
+
+        }
     }
 
 

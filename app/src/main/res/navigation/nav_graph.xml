@@ -80,6 +80,9 @@
         <action
             android:id="@+id/action_account_to_aboutFragment"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_account_to_yourinfoFragment"
+            app:destination="@id/yourinfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/ordersList"
@@ -101,6 +104,10 @@
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.bassem.shoopinguser.ui.main_ui.profile.aboutFragment"
+        android:name="com.bassem.shoopinguser.ui.main_ui.profile.AboutFragment"
         android:label="aboutFragment" />
+    <fragment
+        android:id="@+id/yourinfoFragment"
+        android:name="com.bassem.shoopinguser.ui.main_ui.profile.YourinfoFragment"
+        android:label="YourinfoFragment" />
 </navigation>

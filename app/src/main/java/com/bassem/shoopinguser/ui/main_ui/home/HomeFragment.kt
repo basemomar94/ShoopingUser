@@ -107,7 +107,6 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
     override fun makeFavorite(id: String, position: Int, fav: Boolean, item: ItemsClass) {
         val itemHere = itemsList[position]
         addtoFavorite(id)
-        println(itemHere.favorite)
         if (!itemHere.favorite) {
             itemHere.favorite = true
 
@@ -279,28 +278,7 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     }
 
-    fun twoSum(nums: IntArray, target: Int): IntArray {
-        var sum = 0
-        var answer: IntArray = IntArray(2)
-        nums.forEachIndexed { index, i ->
-            for (r in 0..nums.size) {
-                sum = i + nums[r]
-                if (sum == target) {
-                    var position = 0
-                    answer[position] = i
-                    position++
 
-                }
-
-
-            }
-
-
-        }
-        return answer
-
-
-    }
 
 
 }
