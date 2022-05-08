@@ -69,13 +69,13 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
 
     }
 
-    fun goTo(fragment: Fragment) {
+    private fun goTo(fragment: Fragment) {
         val transcation = requireActivity().supportFragmentManager.beginTransaction()
         transcation.replace(R.id.fragmentContainerLogin, fragment)
         transcation.commit()
     }
 
-    fun signup() {
+    private fun signup() {
         mail = binding!!.mail.text!!.trim().toString()
         password = binding!!.password.text!!.trim().toString()
         passwordCheck = binding!!.passwordcheck.text!!.trim().toString()
@@ -97,7 +97,7 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
         }
     }
 
-    fun checkEmpty() {
+    private fun checkEmpty() {
         mail?.let { errorEmpty(it, binding!!.mailLayout) }
         password?.let { errorEmpty(it, binding!!.passwordLayout) }
         passwordCheck?.let { errorEmpty(it, binding!!.passwordcheckLayout) }

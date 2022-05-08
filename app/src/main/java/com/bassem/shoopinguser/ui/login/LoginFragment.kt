@@ -42,19 +42,20 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     }
 
-    fun goToSignup() {
+    private fun goToSignup() {
         val transcation = requireActivity().supportFragmentManager.beginTransaction()
         transcation.replace(R.id.fragmentContainerLogin, MapsFragment())
         transcation.commit()
+
     }
 
-    fun gotoHome() {
+    private fun gotoHome() {
         val intent = Intent(requireActivity(), HomeContainer::class.java)
         activity?.startActivity(intent)
         activity?.finish()
     }
 
-    fun signIn() {
+    private fun signIn() {
         val mail = binding!!.mailSignin.text!!.trim().toString()
         val password = binding!!.passSigin.text!!.trim().toString()
         SignupFragment().errorEmpty(mail, binding!!.mailSignLayout)
@@ -80,12 +81,12 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     }
 
-    fun loading() {
+    private fun loading() {
         binding!!.loginBtu.visibility = View.GONE
         binding!!.progressBar2.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.loginBtu.visibility = View.VISIBLE
         binding!!.progressBar2.visibility = View.GONE
     }

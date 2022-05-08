@@ -6,10 +6,8 @@ import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.adapters.HomeRecycleAdapter
 import com.bassem.shoopinguser.databinding.HomeFragmentBinding
@@ -121,7 +119,6 @@ class HomeFragment : Fragment(R.layout.home_fragment), HomeRecycleAdapter.expand
 
     private fun goToView(documentid: String, category: String, position: Int) {
         val bundle = Bundle()
-        val item = itemsList[position]
         bundle.putString("document", documentid)
         bundle.putString("category", category)
 

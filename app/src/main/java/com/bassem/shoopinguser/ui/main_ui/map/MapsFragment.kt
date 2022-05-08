@@ -28,12 +28,11 @@ import java.util.*
 
 class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     var binding: FragmentMapsBinding? = null
-    private var callback: OnMapReadyCallback? = null
     private var fusedLocation: FusedLocationProviderClient? = null
     private var map: GoogleMap? = null
     private var location: Location? = null
     private var currentMarker: Marker? = null
-    private var currentAdress: String? = null
+    private var currentAddress: String? = null
 
 
     override fun onCreateView(
@@ -53,13 +52,13 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
         binding?.confirm?.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString("address", currentAdress)
+            bundle.putString("address", currentAddress)
             val signup = SignupFragment()
             signup.arguments = bundle
 
-            val transcation = requireActivity().supportFragmentManager.beginTransaction()
-            transcation.replace(R.id.fragmentContainerLogin, signup)
-            transcation.commit()
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.fragmentContainerLogin, signup)
+            transaction.commit()
 
 
         }
@@ -118,7 +117,11 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         map = googleMap
         val latlon = LatLng(location!!.latitude, location!!.longitude)
         Log.d("Location", latlon.toString())
-        drawMarker(latlon)
+        binding?.mylocation?.setOnClickListener {
+            currentMarker?.remove()
+            drawMarker(latlon)
+
+        }
 
 
 
@@ -134,6 +137,8 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
                     val newlatlong = LatLng(p0.position.latitude, p0.position.longitude)
                     drawMarker(newlatlong)
                 }
+
+                println("you dragged")
             }
 
             override fun onMarkerDragStart(p0: Marker) {
@@ -144,14 +149,10 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     }
 
     private fun drawMarker(latlon: LatLng) {
-        val markerOptions = MarkerOptions().position(latlon).title("Your current location").snippet(
-            getAddress(
-                latlon.latitude, latlon.longitude
-            )
-        ).draggable(true)
+        val markerOptions = MarkerOptions().position(latlon).title("Your current location").snippet(getAddress(latlon.latitude, latlon.longitude)).draggable(true)
         map?.apply {
             animateCamera(CameraUpdateFactory.newLatLng(latlon))
-            animateCamera(CameraUpdateFactory.newLatLngZoom(latlon, 15f))
+            animateCamera(CameraUpdateFactory.newLatLngZoom(latlon, 25f))
         }
         currentMarker=map?.addMarker(markerOptions)
         currentMarker?.showInfoWindow()
@@ -160,8 +161,8 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     private fun getAddress(latitude: Double, longitude: Double): String {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
         val address = geocoder.getFromLocation(latitude, longitude, 1)
-        currentAdress = address[0].getAddressLine(0).toString()
-        return currentAdress as String
+        currentAddress = address[0].getAddressLine(0).toString()
+        return currentAddress as String
     }
 
 

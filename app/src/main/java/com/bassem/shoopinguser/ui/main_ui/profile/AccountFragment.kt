@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.AccountFragmentBinding
 import com.bassem.shoopinguser.ui.login.LoginActivity
@@ -20,22 +19,19 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
     private lateinit var auth: FirebaseAuth
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = AccountFragmentBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //listners
         binding!!.myordersLayout.setOnClickListener {
             findNavController().navigate(R.id.action_account_to_ordersList)
         }
@@ -73,16 +69,16 @@ class AccountFragment : Fragment(R.layout.account_fragment) {
     }
 
 
-    fun logOut() {
+    private fun logOut() {
         loading()
         auth = FirebaseAuth.getInstance()
         auth.signOut()
         val intent = Intent(activity, LoginActivity::class.java)
-        requireActivity()!!.startActivity(intent)
-        requireActivity()!!.finish()
+        requireActivity().startActivity(intent)
+        requireActivity().finish()
     }
 
-    fun loading() {
+    private fun loading() {
         binding!!.logOut.visibility = View.GONE
         binding!!.progressBar4.visibility = View.VISIBLE
     }

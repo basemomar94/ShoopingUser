@@ -6,17 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.andremion.counterfab.CounterFab
 import com.bassem.shoopinguser.R
-import com.bassem.shoopinguser.adapters.FavoriteRecycleAdapter
 import com.bassem.shoopinguser.adapters.OrdersRecycleAdapter
-import com.bassem.shoopinguser.databinding.FavoriteFragmentBinding
 import com.bassem.shoopinguser.databinding.OrdersFragmentBinding
-import com.bassem.shoopinguser.models.FavoriteClass
 import com.bassem.shoopinguser.models.OrderClass
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -26,11 +20,11 @@ import com.google.firebase.firestore.Query
 
 class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.clickInterface {
     lateinit var recyclerView: RecyclerView
-    lateinit var orderAdapter: OrdersRecycleAdapter
-    lateinit var orderList: MutableList<OrderClass>
+    private lateinit var orderAdapter: OrdersRecycleAdapter
+    private lateinit var orderList: MutableList<OrderClass>
     var _binding: OrdersFragmentBinding? = null
     val binding get() = _binding
-    lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var bottomNavigationView: BottomNavigationView
     lateinit var db: FirebaseFirestore
     lateinit var auth: FirebaseAuth
     lateinit var userID: String
@@ -53,7 +47,7 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = OrdersFragmentBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -77,7 +71,7 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
 
     }
 
-    fun recycleSetup() {
+    private fun recycleSetup() {
         orderAdapter = OrdersRecycleAdapter(orderList, this)
         recyclerView = requireView().findViewById(R.id.ordersRV)
         recyclerView.apply {
@@ -98,7 +92,7 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
 
     }
 
-    fun getOrders() {
+    private fun getOrders() {
         db = FirebaseFirestore.getInstance()
         db.collection("orders").whereEqualTo("user_id", userID)
             .orderBy("order_date", Query.Direction.DESCENDING).get().addOnCompleteListener {
@@ -143,12 +137,12 @@ class OrdersFragment : Fragment(R.layout.orders_fragment), OrdersRecycleAdapter.
 
     }
 
-    fun showOrders() {
+    private fun showOrders() {
         binding!!.ordersRV.visibility = View.VISIBLE
         binding!!.loadingSpinner4.visibility = View.GONE
     }
 
-    fun hideOrders() {
+    private fun hideOrders() {
         binding!!.loadingSpinner4.visibility = View.GONE
         binding!!.emptyOrder.visibility = View.VISIBLE
 
