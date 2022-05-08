@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.LoginFragmentBinding
 import com.bassem.shoopinguser.ui.main_ui.HomeContainer
+import com.bassem.shoopinguser.ui.main_ui.map.MapsFragment
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
@@ -43,7 +44,7 @@ class LoginFragment : Fragment(R.layout.login_fragment) {
 
     fun goToSignup() {
         val transcation = requireActivity().supportFragmentManager.beginTransaction()
-        transcation.replace(R.id.fragmentContainerLogin, SignupFragment())
+        transcation.replace(R.id.fragmentContainerLogin, MapsFragment())
         transcation.commit()
     }
 

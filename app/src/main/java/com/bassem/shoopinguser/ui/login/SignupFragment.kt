@@ -32,12 +32,14 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
     private var userId: String? = null
     var token: String? = null
     val fcm: FirebaseMessaging? = null
+    private var address: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         getToken()
+        address= this.arguments?.getString("address")
 
 
     }
@@ -62,10 +64,8 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
             signup()
         }
 
-        binding?.adress?.setOnClickListener {
-            goTo(MapsFragment())
 
-        }
+        binding?.adress?.setText(address)
 
     }
 
