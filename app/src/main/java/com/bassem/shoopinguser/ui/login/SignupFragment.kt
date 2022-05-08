@@ -9,11 +9,10 @@ import androidx.fragment.app.Fragment
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.SignupFragmentBinding
 import com.bassem.shoopinguser.ui.main_ui.HomeContainer
+import com.bassem.shoopinguser.ui.main_ui.map.MapsFragment
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
@@ -22,15 +21,15 @@ import kotlin.collections.HashMap
 class SignupFragment : Fragment(R.layout.signup_fragment) {
     var _binding: SignupFragmentBinding? = null
     val binding get() = _binding
-    private var auth: FirebaseAuth  ?=null
-    private var db: FirebaseFirestore?=null
-    private var mail: String?=null
-    private var password: String?=null
-    private var passwordCheck: String?=null
-    private var name: String?=null
-    private var adress: String?=null
-    private var phone: String?=null
-    private var userId: String?=null
+    private var auth: FirebaseAuth? = null
+    private var db: FirebaseFirestore? = null
+    private var mail: String? = null
+    private var password: String? = null
+    private var passwordCheck: String? = null
+    private var name: String? = null
+    private var adress: String? = null
+    private var phone: String? = null
+    private var userId: String? = null
     var token: String? = null
     val fcm: FirebaseMessaging? = null
 
@@ -61,6 +60,11 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
         }
         binding!!.signupButton.setOnClickListener {
             signup()
+        }
+
+        binding?.adress?.setOnClickListener {
+            goTo(MapsFragment())
+
         }
 
     }
@@ -128,23 +132,23 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
         }
     }
 
-    fun gotoHome() {
+    private fun gotoHome() {
         val intent = Intent(activity, HomeContainer::class.java)
         requireActivity().startActivity(intent)
         requireActivity().finish()
     }
 
-    fun loading() {
+    private fun loading() {
         binding!!.signupButton.visibility = View.INVISIBLE
         binding!!.progressBar.visibility = View.VISIBLE
     }
 
-    fun normal() {
+    private fun normal() {
         binding!!.signupButton.visibility = View.VISIBLE
         binding!!.progressBar.visibility = View.GONE
     }
 
-    fun getSignupInfo(id: String): HashMap<String, Any> {
+    private fun getSignupInfo(id: String): HashMap<String, Any> {
         val list: List<String> = arrayListOf()
         val user = HashMap<String, Any>()
         user["name"] = name!!
@@ -163,7 +167,7 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
         return user
     }
 
-    fun addtoDB(data: HashMap<String, Any>) {
+    private fun addtoDB(data: HashMap<String, Any>) {
         db?.collection("users")?.document(userId!!)?.set(data)?.addOnCompleteListener {
             if (it.isSuccessful) {
                 gotoHome()
@@ -182,12 +186,18 @@ class SignupFragment : Fragment(R.layout.signup_fragment) {
         }
     }
 
-    fun getToken() {
+    private fun getToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener {
             if (it.isSuccessful) {
                 token = it.result
             }
         }
+    }
+
+    fun gotoMap() {
+        val transcation = requireActivity().supportFragmentManager.beginTransaction()
+        transcation.replace(R.id.fragmentContainerLogin, MapsFragment())
+        transcation.commit()
     }
 
 
