@@ -11,20 +11,22 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="221dp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/order" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_rawRes="@raw/check" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:text="You'll get your oder soon!"
+            android:layout_margin="4dp"
+            android:fontFamily="@font/acme"
+            android:text="your order has been place"
             android:textAlignment="center"
             android:textColor="@color/greenPrimary"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/trackSheet"

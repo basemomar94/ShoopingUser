@@ -1,11 +1,14 @@
 package com.bassem.shoopinguser.ui.main_ui.map
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.Dialog
 import android.location.Geocoder
 import android.location.Location
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +16,7 @@ import android.view.ViewGroup
 import com.bassem.shoopinguser.R
 import com.bassem.shoopinguser.databinding.FragmentMapsBinding
 import com.bassem.shoopinguser.ui.login.SignupFragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.GoogleMap
@@ -26,13 +28,15 @@ import com.google.android.gms.maps.model.MarkerOptions
 import pub.devrel.easypermissions.EasyPermissions
 import java.util.*
 
-class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
+class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback,
+    EasyPermissions.PermissionCallbacks {
     var binding: FragmentMapsBinding? = null
     private var fusedLocation: FusedLocationProviderClient? = null
     private var map: GoogleMap? = null
     private var location: Location? = null
     private var currentMarker: Marker? = null
     private var currentAddress: String? = null
+    private var locationCallback: LocationCallback? = null
 
 
     override fun onCreateView(
@@ -47,6 +51,9 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        fusedLocation = LocationServices.getFusedLocationProviderClient(requireContext())
+
 
         getLocation()
 
@@ -73,18 +80,25 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
 
         if (hasPermission()) {
             Log.d("Location", "i have the permission")
-            fusedLocation = LocationServices.getFusedLocationProviderClient(requireContext())
 
-            fusedLocation?.lastLocation?.addOnCompleteListener {
-                Log.d("Location", "Completed")
-
-                if (it.isSuccessful) {
+            fusedLocation?.lastLocation?.addOnSuccessListener { loc ->
+                if (loc != null) {
                     val mapFragment =
                         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
                     mapFragment.getMapAsync(this)
 
-                    Log.d("Location", it.result.toString())
-                    location = it.result
+                    location = loc
+                } else {
+                    Log.d("Location", "Else")
+
+                    // getCurrentLocation()
+                    val dialog = Dialog(requireContext())
+                    dialog.apply {
+                        setTitle("We can't access your location")
+                        show()
+
+                    }
+
                 }
 
             }
@@ -113,13 +127,17 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         )
     }
 
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         val latlon = LatLng(location!!.latitude, location!!.longitude)
         Log.d("Location", latlon.toString())
         binding?.mylocation?.setOnClickListener {
+            Log.d("Location", "onClick")
+
             currentMarker?.remove()
             drawMarker(latlon)
+
 
         }
 
@@ -149,12 +167,13 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
     }
 
     private fun drawMarker(latlon: LatLng) {
-        val markerOptions = MarkerOptions().position(latlon).title("Your current location").snippet(getAddress(latlon.latitude, latlon.longitude)).draggable(true)
+        val markerOptions = MarkerOptions().position(latlon).title("Your current location")
+            .snippet(getAddress(latlon.latitude, latlon.longitude)).draggable(true)
         map?.apply {
             animateCamera(CameraUpdateFactory.newLatLng(latlon))
             animateCamera(CameraUpdateFactory.newLatLngZoom(latlon, 25f))
         }
-        currentMarker=map?.addMarker(markerOptions)
+        currentMarker = map?.addMarker(markerOptions)
         currentMarker?.showInfoWindow()
     }
 
@@ -163,6 +182,33 @@ class MapsFragment : Fragment(R.layout.fragment_maps), OnMapReadyCallback {
         val address = geocoder.getFromLocation(latitude, longitude, 1)
         currentAddress = address[0].getAddressLine(0).toString()
         return currentAddress as String
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+
+        getLocation()
+
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        val locationRequest = LocationRequest().setInterval(2000).setFastestInterval(2000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        fusedLocation?.requestLocationUpdates(locationRequest, object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                super.onLocationResult(p0)
+
+                for (current in p0.locations) {
+                    location = current
+                }
+
+
+            }
+        }, Looper.myLooper()!!)
     }
 
 

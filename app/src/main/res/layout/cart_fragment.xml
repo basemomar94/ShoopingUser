@@ -275,11 +275,12 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <ImageView
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/imageView6"
             android:layout_width="match_parent"
             android:layout_height="261dp"
-            android:src="@drawable/emptycart" />
+            app:lottie_autoPlay="true"
+            android:src="@raw/emptycart" />
 
         <TextView
             android:id="@+id/textView4"

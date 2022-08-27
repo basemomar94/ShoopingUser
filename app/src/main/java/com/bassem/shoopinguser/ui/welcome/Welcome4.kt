@@ -1,5 +1,6 @@
 package com.bassem.shoopinguser.ui.welcome
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +13,7 @@ import com.bassem.shoopinguser.ui.login.LoginActivity
 import kotlin.concurrent.fixedRateTimer
 
 class Welcome4 : Fragment(R.layout.welcome_fragment4) {
-    var button:Button?=null
+    var button: Button? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -27,7 +28,7 @@ class Welcome4 : Fragment(R.layout.welcome_fragment4) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        button=view.findViewById(R.id.start)
+        button = view.findViewById(R.id.start)
         button!!.setOnClickListener {
             goTologin()
         }
@@ -35,10 +36,17 @@ class Welcome4 : Fragment(R.layout.welcome_fragment4) {
 
     }
 
-    fun goTologin() {
-        WelcomeClass().skipWelcome()
+    private fun goTologin() {
+        skipWelcome()
         val intent = Intent(activity, LoginActivity::class.java)
         activity?.startActivity(intent)
         activity?.finish()
+    }
+
+    private fun skipWelcome() {
+        val sharedPreferences = activity?.getSharedPreferences("PREF", Context.MODE_PRIVATE)
+        val editor = sharedPreferences?.edit()
+        editor?.putBoolean("Isskip", true)
+        editor?.apply()
     }
 }
